@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\{Company, CompanyUser, Role, User};
+use App\Models\{Company, CompanyUser, Role, User, WorkSchedule, RateHistory};
 
 it('relations on CompanyUser (company, user, roles)', function () {
     $company = Company::factory()->create();
@@ -15,3 +15,9 @@ it('relations on CompanyUser (company, user, roles)', function () {
         ->and($cu->roles()->count())->toBe(1);
 });
 
+it('has many WorkSchedules and RateHistory', function () {
+    $cu = CompanyUser::factory()->withWorkSchedules(2)->withRateHistory(3)->create();
+
+    expect($cu->workSchedules()->count())->toBe(2)
+        ->and($cu->rateHistory()->count())->toBe(3);
+});

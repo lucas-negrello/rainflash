@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /** @use HasFactory<\Database\Factories\CompanyUserFactory> */
 class CompanyUser extends Model
@@ -45,5 +46,15 @@ class CompanyUser extends Model
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'company_user_roles', 'company_user_id', 'role_id');
+    }
+
+    public function workSchedules(): HasMany
+    {
+        return $this->hasMany(WorkSchedule::class);
+    }
+
+    public function rateHistory(): HasMany
+    {
+        return $this->hasMany(RateHistory::class);
     }
 }

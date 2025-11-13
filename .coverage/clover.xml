@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1762996955">
-  <project timestamp="1762996955" name="Clover Coverage">
+<coverage generated="1762998403">
+  <project timestamp="1762998403" name="Clover Coverage">
     <package name="App\Enums">
       <file name="/home/lucas/Projects/personal/rainflash/app/Enums/CompanyStatusEnum.php">
         <class name="App\Enums\CompanyStatusEnum" namespace="App\Enums">
@@ -56,6 +56,42 @@
         <line num="21" type="stmt" count="1"/>
         <metrics loc="24" ncloc="24" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="7" elements="8" coveredelements="8"/>
       </file>
+      <file name="/home/lucas/Projects/personal/rainflash/app/Enums/WorkScheduleWeekdayEnum.php">
+        <class name="App\Enums\WorkScheduleWeekdayEnum" namespace="App\Enums">
+          <metrics complexity="24" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="27" elements="30" coveredelements="30"/>
+        </class>
+        <line num="15" type="method" name="label" visibility="public" complexity="8" crap="8" count="1"/>
+        <line num="17" type="stmt" count="1"/>
+        <line num="18" type="stmt" count="1"/>
+        <line num="19" type="stmt" count="1"/>
+        <line num="20" type="stmt" count="1"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="28" type="method" name="shortLabel" visibility="public" complexity="8" crap="8" count="1"/>
+        <line num="30" type="stmt" count="1"/>
+        <line num="31" type="stmt" count="1"/>
+        <line num="32" type="stmt" count="1"/>
+        <line num="33" type="stmt" count="1"/>
+        <line num="34" type="stmt" count="1"/>
+        <line num="35" type="stmt" count="1"/>
+        <line num="36" type="stmt" count="1"/>
+        <line num="37" type="stmt" count="1"/>
+        <line num="38" type="stmt" count="1"/>
+        <line num="41" type="method" name="abbreviation" visibility="public" complexity="8" crap="8" count="1"/>
+        <line num="43" type="stmt" count="1"/>
+        <line num="44" type="stmt" count="1"/>
+        <line num="45" type="stmt" count="1"/>
+        <line num="46" type="stmt" count="1"/>
+        <line num="47" type="stmt" count="1"/>
+        <line num="48" type="stmt" count="1"/>
+        <line num="49" type="stmt" count="1"/>
+        <line num="50" type="stmt" count="1"/>
+        <line num="51" type="stmt" count="1"/>
+        <metrics loc="54" ncloc="54" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="27" elements="30" coveredelements="30"/>
+      </file>
     </package>
     <package name="App\Http\Controllers">
       <file name="/home/lucas/Projects/personal/rainflash/app/Http/Controllers/Controller.php">
@@ -85,15 +121,19 @@
       </file>
       <file name="/home/lucas/Projects/personal/rainflash/app/Models/CompanyUser.php">
         <class name="App\Models\CompanyUser" namespace="App\Models">
-          <metrics complexity="3" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" elements="6" coveredelements="6"/>
+          <metrics complexity="5" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="10" coveredelements="10"/>
         </class>
-        <line num="35" type="method" name="company" visibility="public" complexity="1" crap="1" count="3"/>
-        <line num="37" type="stmt" count="3"/>
-        <line num="40" type="method" name="user" visibility="public" complexity="1" crap="1" count="3"/>
-        <line num="42" type="stmt" count="3"/>
-        <line num="45" type="method" name="roles" visibility="public" complexity="1" crap="1" count="3"/>
-        <line num="47" type="stmt" count="3"/>
-        <metrics loc="50" ncloc="49" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" elements="6" coveredelements="6"/>
+        <line num="36" type="method" name="company" visibility="public" complexity="1" crap="1" count="5"/>
+        <line num="38" type="stmt" count="5"/>
+        <line num="41" type="method" name="user" visibility="public" complexity="1" crap="1" count="3"/>
+        <line num="43" type="stmt" count="3"/>
+        <line num="46" type="method" name="roles" visibility="public" complexity="1" crap="1" count="3"/>
+        <line num="48" type="stmt" count="3"/>
+        <line num="51" type="method" name="workSchedules" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="53" type="stmt" count="1"/>
+        <line num="56" type="method" name="rateHistory" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="58" type="stmt" count="1"/>
+        <metrics loc="61" ncloc="60" classes="1" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="10" coveredelements="10"/>
       </file>
       <file name="/home/lucas/Projects/personal/rainflash/app/Models/Permission.php">
         <class name="App\Models\Permission" namespace="App\Models">
@@ -102,6 +142,14 @@
         <line num="27" type="method" name="roles" visibility="public" complexity="1" crap="1" count="2"/>
         <line num="29" type="stmt" count="2"/>
         <metrics loc="32" ncloc="31" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
+      </file>
+      <file name="/home/lucas/Projects/personal/rainflash/app/Models/RateHistory.php">
+        <class name="App\Models\RateHistory" namespace="App\Models">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
+        </class>
+        <line num="31" type="method" name="companyUser" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="33" type="stmt" count="1"/>
+        <metrics loc="36" ncloc="35" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
       </file>
       <file name="/home/lucas/Projects/personal/rainflash/app/Models/ResourceProfile.php">
         <class name="App\Models\ResourceProfile" namespace="App\Models">
@@ -140,12 +188,12 @@
         <class name="App\Models\User" namespace="App\Models">
           <metrics complexity="4" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="24" coveredstatements="24" elements="28" coveredelements="28"/>
         </class>
-        <line num="46" type="method" name="casts" visibility="protected" complexity="1" crap="1" count="10"/>
-        <line num="48" type="stmt" count="10"/>
-        <line num="49" type="stmt" count="10"/>
-        <line num="50" type="stmt" count="10"/>
-        <line num="51" type="stmt" count="10"/>
-        <line num="52" type="stmt" count="10"/>
+        <line num="46" type="method" name="casts" visibility="protected" complexity="1" crap="1" count="13"/>
+        <line num="48" type="stmt" count="13"/>
+        <line num="49" type="stmt" count="13"/>
+        <line num="50" type="stmt" count="13"/>
+        <line num="51" type="stmt" count="13"/>
+        <line num="52" type="stmt" count="13"/>
         <line num="55" type="method" name="resourceProfile" visibility="public" complexity="1" crap="1" count="1"/>
         <line num="57" type="stmt" count="1"/>
         <line num="60" type="method" name="skills" visibility="public" complexity="1" crap="1" count="2"/>
@@ -180,19 +228,27 @@
         <line num="38" type="stmt" count="2"/>
         <metrics loc="41" ncloc="41" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" elements="4" coveredelements="4"/>
       </file>
+      <file name="/home/lucas/Projects/personal/rainflash/app/Models/WorkSchedule.php">
+        <class name="App\Models\WorkSchedule" namespace="App\Models">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
+        </class>
+        <line num="36" type="method" name="companyUser" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="38" type="stmt" count="1"/>
+        <metrics loc="41" ncloc="40" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
+      </file>
     </package>
     <package name="App\Providers">
       <file name="/home/lucas/Projects/personal/rainflash/app/Providers/AppServiceProvider.php">
         <class name="App\Providers\AppServiceProvider" namespace="App\Providers">
           <metrics complexity="2" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" elements="4" coveredelements="4"/>
         </class>
-        <line num="12" type="method" name="register" visibility="public" complexity="1" crap="1" count="22"/>
-        <line num="15" type="stmt" count="22"/>
-        <line num="20" type="method" name="boot" visibility="public" complexity="1" crap="1" count="22"/>
-        <line num="23" type="stmt" count="22"/>
+        <line num="12" type="method" name="register" visibility="public" complexity="1" crap="1" count="27"/>
+        <line num="15" type="stmt" count="27"/>
+        <line num="20" type="method" name="boot" visibility="public" complexity="1" crap="1" count="27"/>
+        <line num="23" type="stmt" count="27"/>
         <metrics loc="25" ncloc="17" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" elements="4" coveredelements="4"/>
       </file>
     </package>
-    <metrics files="14" loc="495" ncloc="463" classes="13" methods="21" coveredmethods="21" conditionals="0" coveredconditionals="0" statements="79" coveredstatements="79" elements="100" coveredelements="100"/>
+    <metrics files="17" loc="637" ncloc="603" classes="16" methods="28" coveredmethods="28" conditionals="0" coveredconditionals="0" statements="110" coveredstatements="110" elements="138" coveredelements="138"/>
   </project>
 </coverage>

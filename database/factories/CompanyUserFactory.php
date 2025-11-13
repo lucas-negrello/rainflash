@@ -2,9 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Company;
-use App\Models\CompanyUser;
-use App\Models\User;
+use App\Models\{Company, CompanyUser, RateHistory, WorkSchedule};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +16,7 @@ class CompanyUserFactory extends Factory
     {
         return [
             'company_id' => Company::factory(),
-            'user_id' => User::factory(),
+            'user_id' => \Database\Factories\UserFactory::new(),
             'primary_title' => fake()->optional()->jobTitle(),
             'currency' => fake()->optional()->currencyCode(),
             'active' => true,
@@ -35,5 +33,18 @@ class CompanyUserFactory extends Factory
             'left_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ]);
     }
-}
 
+    public function withWorkSchedules(int $count = 1): static
+    {
+        return $this->afterCreating(function (CompanyUser $cu) use ($count) {
+            WorkSchedule::factory()->count($count)->create(['company_user_id' => $cu->id]);
+        });
+    }
+
+    public function withRateHistory(int $count = 1): static
+    {
+        return $this->afterCreating(function (CompanyUser $cu) use ($count) {
+            RateHistory::factory()->count($count)->create(['company_user_id' => $cu->id]);
+        });
+    }
+}
