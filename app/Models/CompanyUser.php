@@ -57,4 +57,14 @@ class CompanyUser extends Model
     {
         return $this->hasMany(RateHistory::class);
     }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class, 'actor_company_user_id');
+    }
+
+    public function reportJobs(): HasMany
+    {
+        return $this->hasMany(ReportJob::class, 'requested_by_company_user_id');
+    }
 }

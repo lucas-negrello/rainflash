@@ -6,6 +6,7 @@ use App\Enums\CompanyStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /** @use HasFactory<\Database\Factories\CompanyFactory> */
 class Company extends Model
@@ -38,5 +39,15 @@ class Company extends Model
                 'meta',
             ])
             ->withTimestamps();
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class);
+    }
+
+    public function reportJobs(): HasMany
+    {
+        return $this->hasMany(ReportJob::class);
     }
 }

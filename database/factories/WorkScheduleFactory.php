@@ -15,8 +15,9 @@ class WorkScheduleFactory extends Factory
 
     public function definition(): array
     {
-        $from = now()->startOfWeek()->setHour(9);
-        $to = $from->copy()->addMonths(6);
+        $base = now()->startOfWeek()->setTime(9, 0, 0);
+        $from = (clone $base)->addMinutes(fake()->unique()->numberBetween(0, 100000));
+        $to = (clone $from)->addMonths(fake()->numberBetween(1, 6));
 
         return [
             'company_user_id' => null, // set via ->for(CompanyUser::factory()) or explicitly in tests
