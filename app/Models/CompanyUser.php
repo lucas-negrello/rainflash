@@ -67,4 +67,16 @@ class CompanyUser extends Model
     {
         return $this->hasMany(ReportJob::class, 'requested_by_company_user_id');
     }
+
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'team_members', 'company_user_id', 'team_id')
+            ->withPivot('role_in_team', 'joined_at', 'left_at', 'meta')
+            ->withTimestamps();
+    }
+
+    public function teamMembers(): HasMany
+    {
+        return $this->hasMany(TeamMember::class, 'company_user_id');
+    }
 }

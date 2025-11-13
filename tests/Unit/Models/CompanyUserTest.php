@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\{Company, CompanyUser, Role, User, WorkSchedule, RateHistory, AuditLog, ReportJob};
+use App\Models\{Company, CompanyUser, Role, User, WorkSchedule, RateHistory, AuditLog, ReportJob, Team, TeamMember};
 
 it('relations on CompanyUser (company, user, roles)', function () {
     $company = Company::factory()->create();
@@ -58,4 +58,17 @@ it('has auditLogs and reportJobs relations', function () {
 
     expect($cu->auditLogs()->count())->toBe(2)
         ->and($cu->reportJobs()->count())->toBe(3);
+});
+
+it('belongsToMany teams and hasMany teamMembers', function () {
+    $company = Company::factory()->create();
+    $cu = CompanyUser::factory()->for($company)->create();
+    $teamA = Team::factory()->for($company)->create();
+    $teamB = Team::factory()->for($company)->create();
+
+    TeamMember::factory()->create(['company_user_id' => $cu->id, 'team_id' => $teamA->id]);
+    TeamMember::factory()->create(['company_user_id' => $cu->id, 'team_id' => $teamB->id]);
+
+    expect($cu->teams()->count())->toBe(2)
+        ->and($cu->teamMembers()->count())->toBe(2);
 });
