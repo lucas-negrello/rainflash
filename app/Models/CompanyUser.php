@@ -79,4 +79,19 @@ class CompanyUser extends Model
     {
         return $this->hasMany(TeamMember::class, 'company_user_id');
     }
+
+    public function ptoRequestsAsRequirer(): HasMany
+    {
+        return $this->hasMany(PtoRequest::class, 'company_user_id');
+    }
+
+    public function ptoRequestsAsApprover(): HasMany
+    {
+        return $this->hasMany(PtoRequest::class, 'approved_by_company_user_id');
+    }
+
+    public function ptoApprovals(): HasMany
+    {
+        return $this->hasMany(PtoApproval::class, 'approver_company_user_id');
+    }
 }

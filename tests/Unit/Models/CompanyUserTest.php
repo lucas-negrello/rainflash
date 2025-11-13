@@ -1,6 +1,5 @@
 <?php
-
-use App\Models\{Company, CompanyUser, Role, User, WorkSchedule, RateHistory, AuditLog, ReportJob, Team, TeamMember};
+use App\Models\{Company, CompanyUser, Role, User, WorkSchedule, RateHistory, AuditLog, ReportJob, Team, TeamMember, PtoRequest, PtoApproval};
 
 it('relations on CompanyUser (company, user, roles)', function () {
     $company = Company::factory()->create();
@@ -71,4 +70,30 @@ it('belongsToMany teams and hasMany teamMembers', function () {
 
     expect($cu->teams()->count())->toBe(2)
         ->and($cu->teamMembers()->count())->toBe(2);
+});
+
+it('has ptoRequestsAsRequirer, ptoRequestsAsApprover and ptoApprovals relations', function () {
+    $company = Company::factory()->create();
+    [$reqUser, $aprUser] = CompanyUser::factory()->count(2)->for($company)->create();
+
+    // As requirer
+    PtoRequest::factory()->count(2)->create([
+        'company_id' => $company->id,
+        'company_user_id' => $reqUser->id,
+    ]);
+
+    // As approver
+    PtoRequest::factory()->count(3)->create([
+        'company_id' => $company->id,
+        'approved_by_company_user_id' => $aprUser->id,
+    ]);
+
+    // Approvals
+    PtoApproval::factory()->count(4)->create([
+        'approver_company_user_id' => $aprUser->id,
+    ]);
+
+    expect($reqUser->ptoRequestsAsRequirer()->count())->toBe(2)
+        ->and($aprUser->ptoRequestsAsApprover()->count())->toBe(3)
+        ->and($aprUser->ptoApprovals()->count())->toBe(4);
 });

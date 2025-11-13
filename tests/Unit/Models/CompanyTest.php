@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\CompanyStatusEnum;
-use App\Models\{Company, ReportJob, AuditLog, User, Team};
+use App\Models\{Company, ReportJob, AuditLog, User, Team, PtoRequest};
 
 it('casts and fillables on Company', function () {
     $company = Company::factory()->make([
@@ -41,4 +41,11 @@ it('has many teams', function () {
     Team::factory()->count(2)->create(['company_id' => $company->id]);
 
     expect($company->teams()->count())->toBe(2);
+});
+
+it('has many ptoRequests', function () {
+    $company = Company::factory()->create();
+    PtoRequest::factory()->count(2)->create(['company_id' => $company->id]);
+
+    expect($company->ptoRequests()->count())->toBe(2);
 });

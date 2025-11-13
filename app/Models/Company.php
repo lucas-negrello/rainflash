@@ -55,4 +55,9 @@ class Company extends Model
     {
         return $this->hasMany(Team::class);
     }
+
+    public function ptoRequests(): HasMany
+    {
+        return $this->hasMany(PtoRequest::class);
+    }
 }
