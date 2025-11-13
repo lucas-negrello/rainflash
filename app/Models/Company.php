@@ -60,4 +60,9 @@ class Company extends Model
     {
         return $this->hasMany(PtoRequest::class);
     }
+
+    public function webhooks(): HasMany
+    {
+        return $this->hasMany(CompanyWebhook::class);
+    }
 }
