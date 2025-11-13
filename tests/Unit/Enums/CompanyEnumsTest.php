@@ -9,7 +9,13 @@ it('has expected values for CompanyStatusEnum', function () {
 });
 
 it('returns correct labels for CompanyStatusEnum', function () {
-    expect(CompanyStatusEnum::SUSPENDED->label())->toBe('Suspensa');
-    expect(CompanyStatusEnum::ACTIVE->label())->toBe('Ativa');
-    expect(CompanyStatusEnum::TRIAL->label())->toBe('Trial');
+    $map = [
+        CompanyStatusEnum::SUSPENDED->value => 'Suspensa',
+        CompanyStatusEnum::ACTIVE->value => 'Ativa',
+        CompanyStatusEnum::TRIAL->value => 'Trial',
+    ];
+
+    foreach (CompanyStatusEnum::cases() as $case) {
+        expect($case->label())->toBe($map[$case->value]);
+    }
 });

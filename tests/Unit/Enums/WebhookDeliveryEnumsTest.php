@@ -14,3 +14,8 @@ it('WebhookDeliveryStatusEnum labels', function () {
     }
 });
 
+it('has expected numeric values for WebhookDeliveryStatusEnum', function () {
+    expect(WebhookDeliveryStatusEnum::PENDING->value)->toBe(0)
+        ->and(WebhookDeliveryStatusEnum::SENT->value)->toBe(1)
+        ->and(WebhookDeliveryStatusEnum::FAILED->value)->toBe(2);
+});

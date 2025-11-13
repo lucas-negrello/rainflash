@@ -52,3 +52,28 @@ it('PtoApprovalDecisionEnum labels', function () {
     }
 });
 
+it('has expected numeric values for PtoRequestTypeEnum', function () {
+    expect(PtoRequestTypeEnum::VACATION->value)->toBe(0)
+        ->and(PtoRequestTypeEnum::SICKNESS->value)->toBe(1)
+        ->and(PtoRequestTypeEnum::PTO->value)->toBe(2)
+        ->and(PtoRequestTypeEnum::UNPAID->value)->toBe(3)
+        ->and(PtoRequestTypeEnum::OTHER->value)->toBe(4);
+});
+
+it('has expected numeric values for PtoRequestHoursOptionEnum', function () {
+    expect(PtoRequestHoursOptionEnum::FULL_DAY->value)->toBe(0)
+        ->and(PtoRequestHoursOptionEnum::HALF_DAY->value)->toBe(1)
+        ->and(PtoRequestHoursOptionEnum::CUSTOM_HOURS->value)->toBe(2);
+});
+
+it('has expected numeric values for PtoRequestStatusEnum', function () {
+    expect(PtoRequestStatusEnum::REQUESTED->value)->toBe(0)
+        ->and(PtoRequestStatusEnum::APPROVED->value)->toBe(1)
+        ->and(PtoRequestStatusEnum::REPROVED->value)->toBe(2)
+        ->and(PtoRequestStatusEnum::CANCELED->value)->toBe(3);
+});
+
+it('has expected numeric values for PtoApprovalDecisionEnum', function () {
+    expect(PtoApprovalDecisionEnum::REJECTED->value)->toBe(0)
+        ->and(PtoApprovalDecisionEnum::APPROVED->value)->toBe(1);
+});

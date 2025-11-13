@@ -65,4 +65,9 @@ class Company extends Model
     {
         return $this->hasMany(CompanyWebhook::class);
     }
+
+    public function calendars(): HasMany
+    {
+        return $this->hasMany(Calendar::class);
+    }
 }

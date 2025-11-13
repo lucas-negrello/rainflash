@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\CompanyStatusEnum;
-use App\Models\{Company, ReportJob, AuditLog, User, Team, PtoRequest, CompanyWebhook};
+use App\Models\{Company, ReportJob, AuditLog, User, Team, PtoRequest, CompanyWebhook, Calendar};
 
 it('casts and fillables on Company', function () {
     $company = Company::factory()->make([
@@ -55,4 +55,11 @@ it('has many webhooks', function () {
     CompanyWebhook::factory()->count(2)->create(['company_id' => $company->id]);
 
     expect($company->webhooks()->count())->toBe(2);
+});
+
+it('has many calendars', function () {
+    $company = Company::factory()->create();
+    Calendar::factory()->count(2)->create(['company_id' => $company->id]);
+
+    expect($company->calendars()->count())->toBe(2);
 });
