@@ -70,4 +70,33 @@ class Company extends Model
     {
         return $this->hasMany(Calendar::class);
     }
+
+    public function companySubscriptions(): HasMany
+    {
+        return $this->hasMany(CompanySubscription::class);
+    }
+
+    public function companyFeatureOverrides(): HasMany
+    {
+        return $this->hasMany(CompanyFeatureOverride::class);
+    }
+
+    public function features(): BelongsToMany
+    {
+        return $this->belongsToMany(Feature::class, 'company_feature_overrides')
+            ->withPivot('value', 'meta')
+            ->withTimestamps();
+    }
+
+    public function plans(): BelongsToMany
+    {
+        return $this->belongsToMany(Plan::class, 'company_subscriptions')
+            ->withPivot('status', 'seats_limit', 'period_start', 'period_end', 'trial_end', 'meta')
+            ->withTimestamps();
+    }
+
+    public function currentPlan(): ?Plan
+    {
+        return $this->plans()->orderByDesc('period_start')->first();
+    }
 }
