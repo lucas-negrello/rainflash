@@ -19,3 +19,16 @@ it('returns correct labels for CompanyStatusEnum', function () {
         expect($case->label())->toBe($map[$case->value]);
     }
 });
+
+it('return an array with all objects of the enum', function () {
+    $options = CompanyStatusEnum::labels();
+    $map = [
+        CompanyStatusEnum::SUSPENDED->value => 'Suspensa',
+        CompanyStatusEnum::ACTIVE->value => 'Ativa',
+        CompanyStatusEnum::TRIAL->value => 'Trial',
+    ];
+
+    foreach ($map as $case => $label) {
+        expect($options[$case])->toBe($label);
+    }
+});

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1763432536">
-  <project timestamp="1763432536" name="Clover Coverage">
+<coverage generated="1763482430">
+  <project timestamp="1763482430" name="Clover Coverage">
     <package name="App\Enums">
       <file name="/var/www/html/app/Enums/CalendarEventTypeEnum.php">
         <class name="App\Enums\CalendarEventTypeEnum" namespace="App\Enums">
@@ -28,15 +28,21 @@
       </file>
       <file name="/var/www/html/app/Enums/CompanyStatusEnum.php">
         <class name="App\Enums\CompanyStatusEnum" namespace="App\Enums">
-          <metrics complexity="4" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="6" coveredelements="6"/>
+          <metrics complexity="5" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="12" coveredelements="12"/>
         </class>
-        <line num="11" type="method" name="label" visibility="public" complexity="4" crap="4" count="1"/>
-        <line num="13" type="stmt" count="1"/>
-        <line num="14" type="stmt" count="1"/>
-        <line num="15" type="stmt" count="1"/>
-        <line num="16" type="stmt" count="1"/>
-        <line num="17" type="stmt" count="1"/>
-        <metrics loc="20" ncloc="20" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="6" coveredelements="6"/>
+        <line num="11" type="method" name="label" visibility="public" complexity="4" crap="4" count="2"/>
+        <line num="13" type="stmt" count="2"/>
+        <line num="14" type="stmt" count="2"/>
+        <line num="15" type="stmt" count="2"/>
+        <line num="16" type="stmt" count="2"/>
+        <line num="17" type="stmt" count="2"/>
+        <line num="20" type="method" name="labels" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <metrics loc="29" ncloc="29" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="12" coveredelements="12"/>
       </file>
       <file name="/var/www/html/app/Enums/CompanySubscriptionStatusEnum.php">
         <class name="App\Enums\CompanySubscriptionStatusEnum" namespace="App\Enums">
@@ -200,14 +206,19 @@
       </file>
       <file name="/var/www/html/app/Enums/RoleScopeEnum.php">
         <class name="App\Enums\RoleScopeEnum" namespace="App\Enums">
-          <metrics complexity="3" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+          <metrics complexity="4" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="10" coveredelements="10"/>
         </class>
-        <line num="10" type="method" name="label" visibility="public" complexity="3" crap="3" count="1"/>
-        <line num="12" type="stmt" count="1"/>
-        <line num="13" type="stmt" count="1"/>
-        <line num="14" type="stmt" count="1"/>
-        <line num="15" type="stmt" count="1"/>
-        <metrics loc="18" ncloc="18" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+        <line num="10" type="method" name="label" visibility="public" complexity="3" crap="3" count="2"/>
+        <line num="12" type="stmt" count="2"/>
+        <line num="13" type="stmt" count="2"/>
+        <line num="14" type="stmt" count="2"/>
+        <line num="15" type="stmt" count="2"/>
+        <line num="18" type="method" name="labels" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="20" type="stmt" count="1"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="1"/>
+        <metrics loc="26" ncloc="26" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="10" coveredelements="10"/>
       </file>
       <file name="/var/www/html/app/Enums/TaskStatusEnum.php">
         <class name="App\Enums\TaskStatusEnum" namespace="App\Enums">
@@ -323,6 +334,9 @@
         <metrics loc="54" ncloc="54" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="27" elements="30" coveredelements="30"/>
       </file>
     </package>
+    <file name="/var/www/html/app/Enums/NavigationGroupEnum.php">
+      <metrics loc="14" ncloc="14" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+    </file>
     <package name="App\Http\Controllers\Auth">
       <file name="/var/www/html/app/Http/Controllers/Auth/LoginController.php">
         <class name="App\Http\Controllers\Auth\LoginController" namespace="App\Http\Controllers\Auth">
@@ -816,10 +830,10 @@
         <class name="App\Providers\AppServiceProvider" namespace="App\Providers">
           <metrics complexity="2" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" elements="4" coveredelements="4"/>
         </class>
-        <line num="12" type="method" name="register" visibility="public" complexity="1" crap="1" count="162"/>
-        <line num="15" type="stmt" count="162"/>
-        <line num="20" type="method" name="boot" visibility="public" complexity="1" crap="1" count="162"/>
-        <line num="23" type="stmt" count="162"/>
+        <line num="12" type="method" name="register" visibility="public" complexity="1" crap="1" count="164"/>
+        <line num="15" type="stmt" count="164"/>
+        <line num="20" type="method" name="boot" visibility="public" complexity="1" crap="1" count="164"/>
+        <line num="23" type="stmt" count="164"/>
         <metrics loc="25" ncloc="17" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" elements="4" coveredelements="4"/>
       </file>
     </package>
@@ -828,74 +842,74 @@
         <class name="App\Providers\Filament\AdminPanelProvider" namespace="App\Providers\Filament">
           <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="30" elements="31" coveredelements="31"/>
         </class>
-        <line num="23" type="method" name="panel" visibility="public" complexity="1" crap="1" count="162"/>
-        <line num="25" type="stmt" count="162"/>
-        <line num="26" type="stmt" count="162"/>
-        <line num="27" type="stmt" count="162"/>
-        <line num="28" type="stmt" count="162"/>
-        <line num="29" type="stmt" count="162"/>
-        <line num="30" type="stmt" count="162"/>
-        <line num="31" type="stmt" count="162"/>
-        <line num="32" type="stmt" count="162"/>
-        <line num="33" type="stmt" count="162"/>
-        <line num="34" type="stmt" count="162"/>
-        <line num="35" type="stmt" count="162"/>
-        <line num="36" type="stmt" count="162"/>
-        <line num="37" type="stmt" count="162"/>
-        <line num="38" type="stmt" count="162"/>
-        <line num="39" type="stmt" count="162"/>
-        <line num="40" type="stmt" count="162"/>
-        <line num="41" type="stmt" count="162"/>
-        <line num="42" type="stmt" count="162"/>
-        <line num="43" type="stmt" count="162"/>
-        <line num="44" type="stmt" count="162"/>
-        <line num="45" type="stmt" count="162"/>
-        <line num="46" type="stmt" count="162"/>
-        <line num="47" type="stmt" count="162"/>
-        <line num="48" type="stmt" count="162"/>
-        <line num="49" type="stmt" count="162"/>
-        <line num="50" type="stmt" count="162"/>
-        <line num="51" type="stmt" count="162"/>
-        <line num="52" type="stmt" count="162"/>
-        <line num="53" type="stmt" count="162"/>
-        <line num="54" type="stmt" count="162"/>
+        <line num="23" type="method" name="panel" visibility="public" complexity="1" crap="1" count="164"/>
+        <line num="25" type="stmt" count="164"/>
+        <line num="26" type="stmt" count="164"/>
+        <line num="27" type="stmt" count="164"/>
+        <line num="28" type="stmt" count="164"/>
+        <line num="29" type="stmt" count="164"/>
+        <line num="30" type="stmt" count="164"/>
+        <line num="31" type="stmt" count="164"/>
+        <line num="32" type="stmt" count="164"/>
+        <line num="33" type="stmt" count="164"/>
+        <line num="34" type="stmt" count="164"/>
+        <line num="35" type="stmt" count="164"/>
+        <line num="36" type="stmt" count="164"/>
+        <line num="37" type="stmt" count="164"/>
+        <line num="38" type="stmt" count="164"/>
+        <line num="39" type="stmt" count="164"/>
+        <line num="40" type="stmt" count="164"/>
+        <line num="41" type="stmt" count="164"/>
+        <line num="42" type="stmt" count="164"/>
+        <line num="43" type="stmt" count="164"/>
+        <line num="44" type="stmt" count="164"/>
+        <line num="45" type="stmt" count="164"/>
+        <line num="46" type="stmt" count="164"/>
+        <line num="47" type="stmt" count="164"/>
+        <line num="48" type="stmt" count="164"/>
+        <line num="49" type="stmt" count="164"/>
+        <line num="50" type="stmt" count="164"/>
+        <line num="51" type="stmt" count="164"/>
+        <line num="52" type="stmt" count="164"/>
+        <line num="53" type="stmt" count="164"/>
+        <line num="54" type="stmt" count="164"/>
         <metrics loc="57" ncloc="57" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="30" elements="31" coveredelements="31"/>
       </file>
       <file name="/var/www/html/app/Providers/Filament/UserPanelProvider.php">
         <class name="App\Providers\Filament\UserPanelProvider" namespace="App\Providers\Filament">
           <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="30" elements="31" coveredelements="31"/>
         </class>
-        <line num="22" type="method" name="panel" visibility="public" complexity="1" crap="1" count="162"/>
-        <line num="24" type="stmt" count="162"/>
-        <line num="25" type="stmt" count="162"/>
-        <line num="26" type="stmt" count="162"/>
-        <line num="27" type="stmt" count="162"/>
-        <line num="28" type="stmt" count="162"/>
-        <line num="29" type="stmt" count="162"/>
-        <line num="30" type="stmt" count="162"/>
-        <line num="31" type="stmt" count="162"/>
-        <line num="32" type="stmt" count="162"/>
-        <line num="33" type="stmt" count="162"/>
-        <line num="34" type="stmt" count="162"/>
-        <line num="35" type="stmt" count="162"/>
-        <line num="36" type="stmt" count="162"/>
-        <line num="37" type="stmt" count="162"/>
-        <line num="38" type="stmt" count="162"/>
-        <line num="39" type="stmt" count="162"/>
-        <line num="40" type="stmt" count="162"/>
-        <line num="41" type="stmt" count="162"/>
-        <line num="42" type="stmt" count="162"/>
-        <line num="43" type="stmt" count="162"/>
-        <line num="44" type="stmt" count="162"/>
-        <line num="45" type="stmt" count="162"/>
-        <line num="46" type="stmt" count="162"/>
-        <line num="47" type="stmt" count="162"/>
-        <line num="48" type="stmt" count="162"/>
-        <line num="49" type="stmt" count="162"/>
-        <line num="50" type="stmt" count="162"/>
-        <line num="51" type="stmt" count="162"/>
-        <line num="52" type="stmt" count="162"/>
-        <line num="53" type="stmt" count="162"/>
+        <line num="22" type="method" name="panel" visibility="public" complexity="1" crap="1" count="164"/>
+        <line num="24" type="stmt" count="164"/>
+        <line num="25" type="stmt" count="164"/>
+        <line num="26" type="stmt" count="164"/>
+        <line num="27" type="stmt" count="164"/>
+        <line num="28" type="stmt" count="164"/>
+        <line num="29" type="stmt" count="164"/>
+        <line num="30" type="stmt" count="164"/>
+        <line num="31" type="stmt" count="164"/>
+        <line num="32" type="stmt" count="164"/>
+        <line num="33" type="stmt" count="164"/>
+        <line num="34" type="stmt" count="164"/>
+        <line num="35" type="stmt" count="164"/>
+        <line num="36" type="stmt" count="164"/>
+        <line num="37" type="stmt" count="164"/>
+        <line num="38" type="stmt" count="164"/>
+        <line num="39" type="stmt" count="164"/>
+        <line num="40" type="stmt" count="164"/>
+        <line num="41" type="stmt" count="164"/>
+        <line num="42" type="stmt" count="164"/>
+        <line num="43" type="stmt" count="164"/>
+        <line num="44" type="stmt" count="164"/>
+        <line num="45" type="stmt" count="164"/>
+        <line num="46" type="stmt" count="164"/>
+        <line num="47" type="stmt" count="164"/>
+        <line num="48" type="stmt" count="164"/>
+        <line num="49" type="stmt" count="164"/>
+        <line num="50" type="stmt" count="164"/>
+        <line num="51" type="stmt" count="164"/>
+        <line num="52" type="stmt" count="164"/>
+        <line num="53" type="stmt" count="164"/>
         <metrics loc="56" ncloc="56" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="30" elements="31" coveredelements="31"/>
       </file>
     </package>
@@ -1021,6 +1035,6 @@
         <metrics loc="87" ncloc="74" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="35" elements="39" coveredelements="39"/>
       </file>
     </package>
-    <metrics files="62" loc="2479" ncloc="2401" classes="61" methods="148" coveredmethods="146" conditionals="0" coveredconditionals="0" statements="502" coveredstatements="500" elements="650" coveredelements="646"/>
+    <metrics files="63" loc="2510" ncloc="2432" classes="61" methods="150" coveredmethods="148" conditionals="0" coveredconditionals="0" statements="511" coveredstatements="509" elements="661" coveredelements="657"/>
   </project>
 </coverage>
