@@ -112,6 +112,7 @@ it('has assignments, time entries, and tasks relations', function () {
     TaskFactory::new()->create(['project_id' => $project->id, 'created_by_company_user_id' => $cu->id]);
 
     expect($cu->assignments()->count())->toBe(1)
+        ->and($cu->projects()->count())->toBe(1)
         ->and($cu->timeEntriesAsCreator()->count())->toBe(1)
         ->and($cu->timeEntriesAsReviewer()->count())->toBe(1)
         ->and($cu->tasksAsAssignee()->count())->toBe(1)

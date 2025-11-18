@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /** @use HasFactory<\Database\Factories\CompanyFactory> */
 class Company extends Model
@@ -98,6 +99,21 @@ class Company extends Model
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function tasks(): HasManyThrough
+    {
+        return $this->hasManyThrough(Task::class, Project::class);
+    }
+
+    public function assignments(): HasManyThrough
+    {
+        return $this->hasManyThrough(Assignment::class, Project::class);
+    }
+
+    public function timeEntries(): HasManyThrough
+    {
+        return $this->hasManyThrough(TimeEntry::class, Project::class);
     }
 
     public function currentPlan(): ?Plan

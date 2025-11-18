@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\{Project, Company, Task, Assignment, TimeEntry};
-use Database\Factories\{ProjectFactory, CompanyFactory, TaskFactory, AssignmentFactory, TimeEntryFactory};
+use App\Models\{Project, Company, Task, Assignment, TimeEntry, CompanyUser};
+use Database\Factories\{ProjectFactory, CompanyFactory, TaskFactory, AssignmentFactory, TimeEntryFactory, CompanyUserFactory};
 
 it('creates Project with casts and relations', function () {
     $project = ProjectFactory::new()->create();
@@ -17,3 +17,11 @@ it('creates Project with casts and relations', function () {
         ->and($project->meta)->toBeArray();
 });
 
+it('relates companyUsers via assignments pivot', function () {
+    $project = ProjectFactory::new()->create();
+    $cu = CompanyUserFactory::new()->create(['company_id' => $project->company_id]);
+    AssignmentFactory::new()->create(['project_id' => $project->id, 'company_user_id' => $cu->id]);
+
+    expect($project->companyUsers()->count())->toBe(1)
+        ->and($project->companyUsers()->first())->toBeInstanceOf(CompanyUser::class);
+});

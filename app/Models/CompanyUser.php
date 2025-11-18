@@ -119,4 +119,11 @@ class CompanyUser extends Model
     {
         return $this->hasMany(Task::class, 'created_by_company_user_id');
     }
+
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'assignments', 'company_user_id', 'project_id')
+            ->withPivot('effective_from', 'effective_to', 'weekly_capacity_hours', 'hour_rate_override', 'price_rate_override', 'meta')
+            ->withTimestamps();
+    }
 }

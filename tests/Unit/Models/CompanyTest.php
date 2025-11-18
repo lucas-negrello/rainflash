@@ -1,8 +1,8 @@
 <?php
 
 use App\Enums\CompanyStatusEnum;
-use App\Models\{Company, ReportJob, AuditLog, User, Team, PtoRequest, CompanyWebhook, Calendar, Plan, CompanySubscription, Feature, CompanyFeatureOverride, Project};
-use Database\Factories\{CompanyFactory, PlanFactory, CompanySubscriptionFactory, FeatureFactory, CompanyFeatureOverrideFactory, ProjectFactory};
+use App\Models\{Company, ReportJob, AuditLog, User, Team, PtoRequest, CompanyWebhook, Calendar, Plan, CompanySubscription, Feature, CompanyFeatureOverride, Project, Task, TimeEntry, Assignment, CompanyUser};
+use Database\Factories\{CompanyFactory, PlanFactory, CompanySubscriptionFactory, FeatureFactory, CompanyFeatureOverrideFactory, ProjectFactory, TaskFactory, TimeEntryFactory, AssignmentFactory, CompanyUserFactory};
 
 it('casts and fillables on Company', function () {
     $company = Company::factory()->make([
@@ -134,4 +134,18 @@ it('relations smoke test invokes all relation methods', function () {
         ->and($company->plans()->count())->toBe(1)
         ->and($company->currentPlan())->toBeInstanceOf(\App\Models\Plan::class)
         ->and($company->projects()->count())->toBe(1);
+});
+
+it('has tasks, timeEntries and assignments via projects', function () {
+    $company = CompanyFactory::new()->create();
+    $project = ProjectFactory::new()->create(['company_id' => $company->id]);
+    $creator = CompanyUserFactory::new()->create(['company_id' => $company->id]);
+
+    TaskFactory::new()->create(['project_id' => $project->id, 'created_by_company_user_id' => $creator->id]);
+    TimeEntryFactory::new()->create(['project_id' => $project->id, 'created_by_company_user_id' => $creator->id]);
+    AssignmentFactory::new()->create(['project_id' => $project->id, 'company_user_id' => $creator->id]);
+
+    expect($company->tasks()->count())->toBe(1)
+        ->and($company->timeEntries()->count())->toBe(1)
+        ->and($company->assignments()->count())->toBe(1);
 });
