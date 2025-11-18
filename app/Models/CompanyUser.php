@@ -94,4 +94,29 @@ class CompanyUser extends Model
     {
         return $this->hasMany(PtoApproval::class, 'approver_company_user_id');
     }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(Assignment::class, 'company_user_id');
+    }
+
+    public function timeEntriesAsCreator(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class, 'created_by_company_user_id');
+    }
+
+    public function timeEntriesAsReviewer(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class, 'reviewed_by_company_user_id');
+    }
+
+    public function tasksAsAssignee(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assignee_company_user_id');
+    }
+
+    public function tasksAsCreator(): HasMany
+    {
+        return $this->hasMany(Task::class, 'created_by_company_user_id');
+    }
 }

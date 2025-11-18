@@ -1,8 +1,8 @@
 <?php
 
 use App\Enums\CompanyStatusEnum;
-use App\Models\{Company, ReportJob, AuditLog, User, Team, PtoRequest, CompanyWebhook, Calendar, Plan, CompanySubscription, Feature, CompanyFeatureOverride};
-use Database\Factories\{CompanyFactory, PlanFactory, CompanySubscriptionFactory, FeatureFactory, CompanyFeatureOverrideFactory};
+use App\Models\{Company, ReportJob, AuditLog, User, Team, PtoRequest, CompanyWebhook, Calendar, Plan, CompanySubscription, Feature, CompanyFeatureOverride, Project};
+use Database\Factories\{CompanyFactory, PlanFactory, CompanySubscriptionFactory, FeatureFactory, CompanyFeatureOverrideFactory, ProjectFactory};
 
 it('casts and fillables on Company', function () {
     $company = Company::factory()->make([
@@ -58,6 +58,13 @@ it('has many webhooks', function () {
     expect($company->webhooks()->count())->toBe(2);
 });
 
+it('has many projects', function () {
+    $company = Company::factory()->create();
+    Project::factory()->count(2)->create(['company_id' => $company->id]);
+
+    expect($company->projects()->count())->toBe(2);
+});
+
 it('has subscriptions and feature overrides and features pivot data', function () {
     $plan = PlanFactory::new()->create();
     $company = CompanyFactory::new()->create(['status' => CompanyStatusEnum::ACTIVE]);
@@ -111,6 +118,7 @@ it('relations smoke test invokes all relation methods', function () {
     CompanySubscriptionFactory::new()->create(['company_id' => $company->id, 'plan_id' => $plan->id, 'period_start' => now()->subDay(), 'period_end' => now()->addDay()]);
     $feature = FeatureFactory::new()->create();
     CompanyFeatureOverrideFactory::new()->create(['company_id' => $company->id, 'feature_id' => $feature->id]);
+    $projectA = ProjectFactory::new()->create(['company_id' => $company->id]);
 
     // touch each relation
     expect($company->users())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class)
@@ -124,5 +132,6 @@ it('relations smoke test invokes all relation methods', function () {
         ->and($company->companyFeatureOverrides()->count())->toBe(1)
         ->and($company->features()->count())->toBe(1)
         ->and($company->plans()->count())->toBe(1)
-        ->and($company->currentPlan())->toBeInstanceOf(Plan::class);
+        ->and($company->currentPlan())->toBeInstanceOf(\App\Models\Plan::class)
+        ->and($company->projects()->count())->toBe(1);
 });

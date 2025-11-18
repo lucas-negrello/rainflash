@@ -95,6 +95,11 @@ class Company extends Model
             ->withTimestamps();
     }
 
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
     public function currentPlan(): ?Plan
     {
         return $this->plans()->orderByDesc('period_start')->first();

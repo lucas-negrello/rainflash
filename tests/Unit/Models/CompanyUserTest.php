@@ -1,5 +1,6 @@
 <?php
-use App\Models\{Company, CompanyUser, Role, User, WorkSchedule, RateHistory, AuditLog, ReportJob, Team, TeamMember, PtoRequest, PtoApproval};
+use App\Models\{Company, CompanyUser, Role, User, WorkSchedule, RateHistory, AuditLog, ReportJob, Team, TeamMember, PtoRequest, PtoApproval, Project, Assignment, TimeEntry, Task};
+use Database\Factories\{ProjectFactory, AssignmentFactory, TimeEntryFactory, TaskFactory};
 
 it('relations on CompanyUser (company, user, roles)', function () {
     $company = Company::factory()->create();
@@ -96,4 +97,23 @@ it('has ptoRequestsAsRequirer, ptoRequestsAsApprover and ptoApprovals relations'
     expect($reqUser->ptoRequestsAsRequirer()->count())->toBe(2)
         ->and($aprUser->ptoRequestsAsApprover()->count())->toBe(3)
         ->and($aprUser->ptoApprovals()->count())->toBe(4);
+});
+
+it('has assignments, time entries, and tasks relations', function () {
+    $company = Company::factory()->create();
+    $cu = CompanyUser::factory()->for($company)->create();
+
+    $project = ProjectFactory::new()->create(['company_id' => $company->id]);
+
+    AssignmentFactory::new()->create(['company_user_id' => $cu->id, 'project_id' => $project->id]);
+    TimeEntryFactory::new()->create(['project_id' => $project->id, 'created_by_company_user_id' => $cu->id]);
+    TimeEntryFactory::new()->create(['project_id' => $project->id, 'reviewed_by_company_user_id' => $cu->id]);
+    TaskFactory::new()->create(['project_id' => $project->id, 'assignee_company_user_id' => $cu->id]);
+    TaskFactory::new()->create(['project_id' => $project->id, 'created_by_company_user_id' => $cu->id]);
+
+    expect($cu->assignments()->count())->toBe(1)
+        ->and($cu->timeEntriesAsCreator()->count())->toBe(1)
+        ->and($cu->timeEntriesAsReviewer()->count())->toBe(1)
+        ->and($cu->tasksAsAssignee()->count())->toBe(1)
+        ->and($cu->tasksAsCreator()->count())->toBe(1);
 });
