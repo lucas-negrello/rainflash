@@ -16,4 +16,13 @@ enum CompanyStatusEnum: int
             self::TRIAL => 'Trial',
         };
     }
+
+    public static function labels()
+    {
+        return [
+            self::SUSPENDED->value => self::SUSPENDED->label(),
+            self::ACTIVE->value => self::ACTIVE->label(),
+            self::TRIAL->value => self::TRIAL->label(),
+        ];
+    }
 }

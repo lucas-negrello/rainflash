@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasCompanyRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** @use HasFactory<\Database\Factories\CompanyUserFactory> */
 class CompanyUser extends Model
 {
-    use HasFactory;
+    use HasFactory, HasCompanyRoles;
 
     protected $table = 'company_user';
 
@@ -33,97 +34,22 @@ class CompanyUser extends Model
         'meta' => 'array',
     ];
 
-    public function company(): BelongsTo
-    {
-        return $this->belongsTo(Company::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'company_user_roles', 'company_user_id', 'role_id');
-    }
-
-    public function workSchedules(): HasMany
-    {
-        return $this->hasMany(WorkSchedule::class);
-    }
-
-    public function rateHistory(): HasMany
-    {
-        return $this->hasMany(RateHistory::class);
-    }
-
-    public function auditLogs(): HasMany
-    {
-        return $this->hasMany(AuditLog::class, 'actor_company_user_id');
-    }
-
-    public function reportJobs(): HasMany
-    {
-        return $this->hasMany(ReportJob::class, 'requested_by_company_user_id');
-    }
-
-    public function teams(): BelongsToMany
-    {
-        return $this->belongsToMany(Team::class, 'team_members', 'company_user_id', 'team_id')
-            ->withPivot('role_in_team', 'joined_at', 'left_at', 'meta')
-            ->withTimestamps();
-    }
-
-    public function teamMembers(): HasMany
-    {
-        return $this->hasMany(TeamMember::class, 'company_user_id');
-    }
-
-    public function ptoRequestsAsRequirer(): HasMany
-    {
-        return $this->hasMany(PtoRequest::class, 'company_user_id');
-    }
-
-    public function ptoRequestsAsApprover(): HasMany
-    {
-        return $this->hasMany(PtoRequest::class, 'approved_by_company_user_id');
-    }
-
-    public function ptoApprovals(): HasMany
-    {
-        return $this->hasMany(PtoApproval::class, 'approver_company_user_id');
-    }
-
-    public function assignments(): HasMany
-    {
-        return $this->hasMany(Assignment::class, 'company_user_id');
-    }
-
-    public function timeEntriesAsCreator(): HasMany
-    {
-        return $this->hasMany(TimeEntry::class, 'created_by_company_user_id');
-    }
-
-    public function timeEntriesAsReviewer(): HasMany
-    {
-        return $this->hasMany(TimeEntry::class, 'reviewed_by_company_user_id');
-    }
-
-    public function tasksAsAssignee(): HasMany
-    {
-        return $this->hasMany(Task::class, 'assignee_company_user_id');
-    }
-
-    public function tasksAsCreator(): HasMany
-    {
-        return $this->hasMany(Task::class, 'created_by_company_user_id');
-    }
-
-    public function projects(): BelongsToMany
-    {
-        return $this->belongsToMany(Project::class, 'assignments', 'company_user_id', 'project_id')
-            ->withPivot('effective_from', 'effective_to', 'weekly_capacity_hours', 'hour_rate_override', 'price_rate_override', 'meta')
-            ->withTimestamps();
-    }
+    public function company(): BelongsTo { return $this->belongsTo(Company::class); }
+    public function user(): BelongsTo { return $this->belongsTo(User::class); }
+    public function roles(): BelongsToMany { return $this->belongsToMany(Role::class, 'company_user_roles', 'company_user_id', 'role_id'); }
+    public function workSchedules(): HasMany { return $this->hasMany(WorkSchedule::class); }
+    public function rateHistory(): HasMany { return $this->hasMany(RateHistory::class); }
+    public function auditLogs(): HasMany { return $this->hasMany(AuditLog::class, 'actor_company_user_id'); }
+    public function reportJobs(): HasMany { return $this->hasMany(ReportJob::class, 'requested_by_company_user_id'); }
+    public function teams(): BelongsToMany { return $this->belongsToMany(Team::class, 'team_members', 'company_user_id', 'team_id')->withPivot('role_in_team', 'joined_at', 'left_at', 'meta')->withTimestamps(); }
+    public function teamMembers(): HasMany { return $this->hasMany(TeamMember::class, 'company_user_id'); }
+    public function ptoRequestsAsRequirer(): HasMany { return $this->hasMany(PtoRequest::class, 'company_user_id'); }
+    public function ptoRequestsAsApprover(): HasMany { return $this->hasMany(PtoRequest::class, 'approved_by_company_user_id'); }
+    public function ptoApprovals(): HasMany { return $this->hasMany(PtoApproval::class, 'approver_company_user_id'); }
+    public function assignments(): HasMany { return $this->hasMany(Assignment::class, 'company_user_id'); }
+    public function timeEntriesAsCreator(): HasMany { return $this->hasMany(TimeEntry::class, 'created_by_company_user_id'); }
+    public function timeEntriesAsReviewer(): HasMany { return $this->hasMany(TimeEntry::class, 'reviewed_by_company_user_id'); }
+    public function tasksAsAssignee(): HasMany { return $this->hasMany(Task::class, 'assignee_company_user_id'); }
+    public function tasksAsCreator(): HasMany { return $this->hasMany(Task::class, 'created_by_company_user_id'); }
+    public function projects(): BelongsToMany { return $this->belongsToMany(Project::class, 'assignments', 'company_user_id', 'project_id')->withPivot('effective_from', 'effective_to', 'weekly_capacity_hours', 'hour_rate_override', 'price_rate_override', 'meta')->withTimestamps(); }
 }

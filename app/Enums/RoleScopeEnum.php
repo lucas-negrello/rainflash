@@ -14,4 +14,12 @@ enum RoleScopeEnum: int
             RoleScopeEnum::COMPANY => 'Empresa',
         };
     }
+
+    public static function labels()
+    {
+        return [
+            self::GLOBAL->value => self::GLOBAL->label(),
+            self::COMPANY->value => self::COMPANY->label(),
+        ];
+    }
 }

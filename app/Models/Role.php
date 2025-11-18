@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use App\Enums\RoleScopeEnum;
+use App\Traits\RoleMethods;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Permission\Contracts\Role as RoleContract;
 
 /** @use HasFactory<\Database\Factories\RoleFactory> */
-class Role extends Model
+class Role extends Model implements RoleContract
 {
-    use HasFactory;
+    use HasFactory, RoleMethods;
 
     protected $table = 'roles';
 
@@ -34,6 +36,6 @@ class Role extends Model
 
     public function companyUsers(): BelongsToMany
     {
-        return $this->belongsToMany(CompanyUser::class, 'company_user_roles', 'company_user_id', 'role_id');
+        return $this->belongsToMany(CompanyUser::class, 'company_user_roles', 'role_id', 'company_user_id');
     }
 }
