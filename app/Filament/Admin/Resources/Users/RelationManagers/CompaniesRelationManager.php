@@ -12,6 +12,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -35,92 +38,77 @@ class CompaniesRelationManager extends RelationManager
                     ->sortable(),
 
                 TextColumn::make('pivot.primary_title')
-                    ->label('Cargo/Título')
-                    ->searchable()
-                    ->sortable(),
+                    ->label('Cargo'),
 
                 TextColumn::make('pivot.currency')
                     ->label('Moeda')
                     ->badge(),
+
+                TextColumn::make('pivot.joined_at')
+                    ->label('Entrada')
+                    ->dateTime('d/m/Y')
+                    ->sortable(),
+
+                TextColumn::make('pivot.left_at')
+                    ->label('Saída')
+                    ->dateTime('d/m/Y')
+                    ->placeholder('—'),
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->label('Vincular Empresa')
+                    ->label('Vincular empresa')
                     ->preloadRecordSelect()
-                    ->schema(fn (AttachAction $action): array => [
-                        $action->getRecordSelect()
-                            ->label('Empresa')
-                            ->searchable()
-                            ->required()
-                            ->options(Company::pluck('name', 'id')),
-
-                        TextInput::make('primary_title')
-                            ->label('Cargo/Título')
-                            ->maxLength(255),
-
-                        Select::make('currency')
-                            ->label('Moeda')
-                            ->options([
-                                'BRL' => 'Real (BRL)',
-                                'USD' => 'Dólar (USD)',
-                                'EUR' => 'Euro (EUR)',
-                            ])
-                            ->default('BRL'),
-
-                        Toggle::make('active')
-                            ->label('Ativo')
-                            ->default(true),
-
-                        DateTimePicker::make('joined_at')
-                            ->label('Data de Entrada')
-                            ->default(now())
-                            ->displayFormat('d/m/Y'),
-
-                        DateTimePicker::make('left_at')
-                            ->label('Data de Saída')
-                            ->displayFormat('d/m/Y'),
-
-                        KeyValue::make('meta')
-                            ->label('Metadados (opcional)')
-                            ->keyLabel('Chave')
-                            ->valueLabel('Valor')
-                            ->default([])
-                            ->dehydrateStateUsing(fn ($state) => empty($state) ? null : $state),
-                    ]),
+                    ->recordSelect(fn (AttachAction $action) => $action->getRecordSelect()
+                        ->label('Empresa')
+                        ->searchable()
+                        ->relationship('companies', 'name'),
+                    )
+                    ->schema($this->getPivotFormSchema()),
             ])
             ->recordActions([
                 EditAction::make()
-                    ->label('Editar')
-                    ->schema([
-                        Select::make('currency')
-                            ->label('Moeda')
-                            ->options([
-                                'BRL' => 'Real (BRL)',
-                                'USD' => 'Dólar (USD)',
-                                'EUR' => 'Euro (EUR)',
-                            ]),
-
-                        Toggle::make('active')
-                            ->label('Ativo'),
-
-                        DateTimePicker::make('joined_at')
-                            ->label('Data de Entrada')
-                            ->displayFormat('d/m/Y'),
-
-                        DateTimePicker::make('left_at')
-                            ->label('Data de Saída')
-                            ->displayFormat('d/m/Y'),
-
-                        KeyValue::make('meta')
-                            ->label('Metadados (opcional)')
-                            ->keyLabel('Chave')
-                            ->valueLabel('Valor')
-                            ->default([])
-                            ->dehydrateStateUsing(fn ($state) => empty($state) ? null : $state),
-                    ]),
-
+                    ->label('Editar vínculo')
+                    ->schema($this->getPivotFormSchema()),
                 DetachAction::make()
                     ->label('Desvincular'),
             ]);
+    }
+
+    protected function getPivotFormSchema(): array
+    {
+        return [
+            TextInput::make('primary_title')
+                ->label('Cargo/Título')
+                ->maxLength(255),
+
+            Select::make('currency')
+                ->label('Moeda')
+                ->options([
+                    'BRL' => 'Real (BRL)',
+                    'USD' => 'Dólar (USD)',
+                    'EUR' => 'Euro (EUR)',
+                ])
+                ->default('BRL'),
+
+            Toggle::make('active')
+                ->label('Ativo')
+                ->default(true),
+
+            DateTimePicker::make('joined_at')
+                ->label('Data de entrada')
+                ->displayFormat('d/m/Y')
+                ->default(now()),
+
+            DateTimePicker::make('left_at')
+                ->label('Data de saída')
+                ->displayFormat('d/m/Y'),
+
+            KeyValue::make('meta')
+                ->label('Metadados (opcional)')
+                ->keyLabel('Chave')
+                ->valueLabel('Valor')
+                ->default([])
+                ->dehydrateStateUsing(fn ($state) => empty($state) ? null : $state),
+        ];
     }
 }

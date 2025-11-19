@@ -5,6 +5,9 @@ namespace App\Filament\Admin\Resources\Users\RelationManagers;
 use App\Models\CompanyUser;
 use App\Models\Role;
 use Filament\Actions\Action;
+use Filament\Actions\AttachAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
@@ -27,71 +30,37 @@ class RolesPermissionsRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Empresa')
+                    ->label('Nome')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->icon('heroicon-o-key'),
 
-                TextColumn::make('companyUser.roles_count')
-                    ->label('Papéis')
-                    ->getStateUsing(function ($record) {
-                        $companyUser = CompanyUser::where('company_id', $record->id)
-                            ->where('user_id', $this->getOwnerRecord()->id)
-                            ->first();
-                        return $companyUser?->roles()->count() ?? 0;
-                    })
-                    ->badge()
-                    ->color('info'),
-
-                TextColumn::make('companyUser.roles')
-                    ->label('Papéis Atribuídos')
-                    ->getStateUsing(function ($record) {
-                        $companyUser = CompanyUser::where('company_id', $record->id)
-                            ->where('user_id', $this->getOwnerRecord()->id)
-                            ->first();
-                        return $companyUser?->roles()->pluck('name')->join(', ') ?? '—';
-                    })
-                    ->wrap(),
+                TextColumn::make('key')
+                    ->label('Chave')
+                    ->searchable()
+                    ->copyable()
+                    ->badge(),
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->label('Adicionar permissão')
+                    ->recordSelect(fn (AttachAction $action) => $action->getRecordSelect()
+                        ->label('Permissão')
+                        ->searchable()
+                        ->relationship('permissions', 'name'),
+                    ),
             ])
             ->recordActions([
-                Action::make('manage_roles')
-                    ->label('Gerenciar Papéis')
-                    ->icon('heroicon-o-shield-check')
-                    ->form(function ($record) {
-                        $companyUser = CompanyUser::where('company_id', $record->id)
-                            ->where('user_id', $this->getOwnerRecord()->id)
-                            ->first();
-
-                        return [
-                            Section::make('Papéis')
-                                ->schema([
-                                    Select::make('roles')
-                                        ->label('Papéis')
-                                        ->multiple()
-                                        ->options(Role::where('scope', \App\Enums\RoleScopeEnum::COMPANY)
-                                            ->pluck('name', 'id'))
-                                        ->default($companyUser?->roles()->pluck('roles.id')->toArray() ?? [])
-                                        ->preload()
-                                        ->searchable(),
-                                ]),
-                        ];
-                    })
-                    ->action(function (array $data, $record) {
-                        $companyUser = CompanyUser::where('company_id', $record->id)
-                            ->where('user_id', $this->getOwnerRecord()->id)
-                            ->first();
-
-                        if ($companyUser) {
-                            $companyUser->roles()->sync($data['roles'] ?? []);
-
-                            Notification::make()
-                                ->title('Papéis atualizados com sucesso')
-                                ->success()
-                                ->send();
-                        }
-                    }),
+                DetachAction::make()
+                    ->label('Remover'),
             ])
-            ->emptyStateHeading('Nenhuma empresa vinculada')
-            ->emptyStateDescription('Vincule o usuário a uma empresa primeiro para gerenciar papéis.');
+            ->toolbarActions([
+                DetachBulkAction::make()
+                    ->label('Remover selecionadas'),
+            ])
+            ->emptyStateHeading('Nenhuma permissão vinculada')
+            ->emptyStateDescription('Adicione permissões a este papel usando o botão "Adicionar permissão".')
+            ->emptyStateIcon('heroicon-o-key');
     }
 }
 
