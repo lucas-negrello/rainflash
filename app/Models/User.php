@@ -86,6 +86,11 @@ class User extends Authenticatable implements FilamentUser
             ->withTimestamps();
     }
 
+    public function companyUsers(): HasMany
+    {
+        return $this->hasMany(CompanyUser::class);
+    }
+
     public function auditLogs(): HasMany
     {
         return $this->hasMany(AuditLog::class, 'actor_user_id');
@@ -93,7 +98,21 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(FilamentPanel $panel): bool
     {
-        // Permitimos acesso básico; os middlewares decidem redirecionamentos e bloqueios por escopo.
         return true;
+    }
+
+    public function rolesInCompanies()
+    {
+        return $this->companyUsers()
+            ->with(['roles', 'company'])
+            ->get()
+            ->flatMap(function ($companyUser) {
+                return $companyUser->roles->map(function ($role) use ($companyUser) {
+                    $role->company_name = $companyUser->company->name;
+                    $role->company_id = $companyUser->company->id;
+                    return $role;
+                });
+            });
+
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
-use App\Models\Company;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
@@ -12,9 +11,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -27,6 +23,7 @@ class CompaniesRelationManager extends RelationManager
     protected static ?string $modelLabel = 'empresa';
 
     protected static ?string $pluralModelLabel = 'empresas';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public function table(Table $table): Table
     {
@@ -58,11 +55,14 @@ class CompaniesRelationManager extends RelationManager
                 AttachAction::make()
                     ->label('Vincular empresa')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn ($select) => $select
-                        ->label('Empresa')
-                        ->searchable(),
-                    )
-                    ->schema($this->getPivotFormSchema()),
+                    ->schema(fn (AttachAction $action): array => [
+                        $action
+                            ->getRecordSelect()
+                            ->multiple()
+                            ->label('Empresa')
+                            ->searchable(),
+                        ...$this->getPivotFormSchema()
+                    ]),
             ])
             ->recordActions([
                 EditAction::make()

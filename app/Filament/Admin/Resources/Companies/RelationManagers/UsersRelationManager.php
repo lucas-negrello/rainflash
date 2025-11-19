@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\Companies\RelationManagers;
 
-use App\Models\User;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
@@ -27,6 +26,8 @@ class UsersRelationManager extends RelationManager
 
     protected static ?string $pluralModelLabel = 'usuários';
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     public function table(Table $table): Table
     {
         return $table
@@ -41,10 +42,6 @@ class UsersRelationManager extends RelationManager
                     ->searchable()
                     ->copyable()
                     ->sortable(),
-
-                TextColumn::make('pivot.primary_title')
-                    ->label('Cargo/Título')
-                    ->searchable(),
 
                 IconColumn::make('pivot.active')
                     ->label('Ativo')
@@ -72,11 +69,14 @@ class UsersRelationManager extends RelationManager
                 AttachAction::make()
                     ->label('Vincular usuário')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn ($select) => $select
+                    ->schema(fn (AttachAction $action): array => [
+                        $action
+                            ->getRecordSelect()
                             ->label('Usuário')
                             ->searchable()
-                    )
-                    ->schema($this->getPivotFormSchema()),
+                            ->multiple(),
+                        ...$this->getPivotFormSchema()
+                    ]),
             ])
             ->recordActions([
                 EditAction::make()
