@@ -27,7 +27,7 @@ trait PermissionMethods
             throw new PermissionDoesNotExist("There is no permission named `{$name}` for guard `{$guardName}`.");
         }
 
-        return $permission; // @phpstan-ignore-line
+        return $permission;
     }
 
     /** @return PermissionContract */
@@ -37,7 +37,7 @@ trait PermissionMethods
         if (!$permission) {
             throw new PermissionDoesNotExist("There is no permission with id `{$id}` for guard `{$guardName}`.");
         }
-        return $permission; // @phpstan-ignore-line
+        return $permission;
     }
 
     /** @return PermissionContract */
@@ -49,7 +49,7 @@ trait PermissionMethods
             ->first();
 
         if ($existing) {
-            return $existing; // @phpstan-ignore-line
+            return $existing;
         }
 
         $data = [
@@ -63,6 +63,6 @@ trait PermissionMethods
             throw new PermissionAlreadyExists("A permission `{$name}` already exists for guard `{$guardName}`.");
         }
 
-        return static::create($data); // @phpstan-ignore-line
+        return static::create($data);
     }
 }

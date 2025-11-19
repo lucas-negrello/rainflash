@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum CalendarScopeEnum: int
+use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
+
+enum CalendarScopeEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case COMPANY = 0;
     case REGIONAL = 1;
     case USER = 2;
@@ -14,6 +19,15 @@ enum CalendarScopeEnum: int
             self::COMPANY => 'Empresarial',
             self::REGIONAL => 'Regional',
             self::USER => 'Particular',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::COMPANY => 'blue',
+            self::REGIONAL => 'purple',
+            self::USER => 'teal',
         };
     }
 }

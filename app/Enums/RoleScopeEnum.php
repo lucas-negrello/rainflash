@@ -2,24 +2,29 @@
 
 namespace App\Enums;
 
-enum RoleScopeEnum: int
+use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
+
+enum RoleScopeEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case GLOBAL = 0;
     case COMPANY = 1;
 
-    public function label()
+    public function label(): string
     {
         return match ($this) {
-            RoleScopeEnum::GLOBAL => 'Global',
-            RoleScopeEnum::COMPANY => 'Empresa',
+            self::GLOBAL => 'Global',
+            self::COMPANY => 'Empresa',
         };
     }
 
-    public static function labels()
+    public function color(): string
     {
-        return [
-            self::GLOBAL->value => self::GLOBAL->label(),
-            self::COMPANY->value => self::COMPANY->label(),
-        ];
+        return match ($this) {
+            self::GLOBAL => 'purple',
+            self::COMPANY => 'blue',
+        };
     }
 }

@@ -14,13 +14,13 @@ it('has expected values for WorkScheduleWeekdayEnum', function () {
 
 it('returns correct labels and abbreviations for all days', function () {
     $map = [
-        1 => ['Segunda-feira', 'Seg', 'S'],
-        2 => ['Terça-feira', 'Ter', 'T'],
-        3 => ['Quarta-feira', 'Qua', 'Q'],
-        4 => ['Quinta-feira', 'Qui', 'Q'],
-        5 => ['Sexta-feira', 'Sex', 'S'],
-        6 => ['Sábado', 'Sáb', 'S'],
-        7 => ['Domingo', 'Dom', 'D'],
+        WorkScheduleWeekdayEnum::MONDAY->value => ['Segunda-feira', 'Seg', 'S'],
+        WorkScheduleWeekdayEnum::TUESDAY->value => ['Terça-feira', 'Ter', 'T'],
+        WorkScheduleWeekdayEnum::WEDNESDAY->value => ['Quarta-feira', 'Qua', 'Q'],
+        WorkScheduleWeekdayEnum::THURSDAY->value => ['Quinta-feira', 'Qui', 'Q'],
+        WorkScheduleWeekdayEnum::FRIDAY->value => ['Sexta-feira', 'Sex', 'S'],
+        WorkScheduleWeekdayEnum::SATURDAY->value => ['Sábado', 'Sáb', 'S'],
+        WorkScheduleWeekdayEnum::SUNDAY->value => ['Domingo', 'Dom', 'D'],
     ];
 
     foreach (WorkScheduleWeekdayEnum::cases() as $case) {
@@ -29,4 +29,16 @@ it('returns correct labels and abbreviations for all days', function () {
             ->and($case->shortLabel())->toBe($short)
             ->and($case->abbreviation())->toBe($abbr);
     }
+});
+
+it('provides colors mapping for WorkScheduleWeekdayEnum', function () {
+    expect(WorkScheduleWeekdayEnum::colors())->toEqual([
+        1 => 'gray', 2 => 'gray', 3 => 'gray', 4 => 'gray', 5 => 'gray', 6 => 'gray', 7 => 'gray'
+    ]);
+});
+
+it('fromValue and options equivalence for WorkScheduleWeekdayEnum', function () {
+    expect(WorkScheduleWeekdayEnum::fromValue(1))->toBe(WorkScheduleWeekdayEnum::MONDAY)
+        ->and(WorkScheduleWeekdayEnum::dropdownOptions())->toEqual(WorkScheduleWeekdayEnum::labels())
+        ->toEqual(WorkScheduleWeekdayEnum::toSelectOptions());
 });

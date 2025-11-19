@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum ResourceProfileSeniorityEnum: int
+use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
+
+enum ResourceProfileSeniorityEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case INTERN = 1;
     case JUNIOR = 2;
     case MID_LEVEL = 3;
@@ -24,6 +29,20 @@ enum ResourceProfileSeniorityEnum: int
             self::MANAGER => 'Gerente',
             self::DIRECTOR => 'Diretor',
             self::EXECUTIVE => 'Executivo',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::INTERN => 'gray',
+            self::JUNIOR => 'teal',
+            self::MID_LEVEL => 'blue',
+            self::SENIOR => 'purple',
+            self::LEAD => 'orange',
+            self::MANAGER => 'yellow',
+            self::DIRECTOR => 'red',
+            self::EXECUTIVE => 'green',
         };
     }
 }

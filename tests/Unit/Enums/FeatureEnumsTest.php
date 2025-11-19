@@ -20,3 +20,16 @@ it('returns correct labels for FeatureTypeEnum', function () {
     }
 });
 
+it('provides colors mapping for FeatureTypeEnum', function () {
+    expect(FeatureTypeEnum::colors())->toEqual([
+        FeatureTypeEnum::BOOLEAN->value => 'blue',
+        FeatureTypeEnum::LIMIT->value => 'orange',
+        FeatureTypeEnum::TIER->value => 'purple',
+    ]);
+});
+
+it('fromValue and options equivalence for FeatureTypeEnum', function () {
+    expect(FeatureTypeEnum::fromValue(1))->toBe(FeatureTypeEnum::LIMIT)
+        ->and(FeatureTypeEnum::dropdownOptions())->toEqual(FeatureTypeEnum::labels())
+        ->toEqual(FeatureTypeEnum::toSelectOptions());
+});

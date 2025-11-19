@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum ReportJobTypeEnum: int
+use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
+
+enum ReportJobTypeEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case CSV = 0;
     case PDF = 1;
     case XLSX = 2;
@@ -14,6 +19,15 @@ enum ReportJobTypeEnum: int
             self::CSV => 'CSV',
             self::PDF => 'PDF',
             self::XLSX => 'XLSX',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::CSV => 'green',
+            self::PDF => 'red',
+            self::XLSX => 'blue',
         };
     }
 

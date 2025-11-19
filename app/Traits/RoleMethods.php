@@ -29,7 +29,7 @@ trait RoleMethods
             throw new RoleDoesNotExist("There is no role named `{$name}` for guard `{$guardName}`.");
         }
 
-        return $role; // @phpstan-ignore-line
+        return $role;
     }
 
     /** @return RoleContract */
@@ -39,7 +39,7 @@ trait RoleMethods
         if (!$role) {
             throw new RoleDoesNotExist("There is no role with id `{$id}` for guard `{$guardName}`.");
         }
-        return $role; // @phpstan-ignore-line
+        return $role;
     }
 
     /** @return RoleContract */
@@ -50,7 +50,7 @@ trait RoleMethods
             ->orWhere('name', $name)
             ->first();
         if ($existing) {
-            return $existing; // @phpstan-ignore-line
+            return $existing;
         }
 
         $data = [
@@ -63,7 +63,7 @@ trait RoleMethods
             throw new RoleAlreadyExists("A role `{$name}` already exists for guard `{$guardName}`.");
         }
 
-        return static::create($data); // @phpstan-ignore-line
+        return static::create($data);
     }
 
     public function hasPermissionTo($permission, ?string $guardName): bool

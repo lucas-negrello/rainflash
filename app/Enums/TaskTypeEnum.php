@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum TaskTypeEnum: int
+use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
+
+enum TaskTypeEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case SUPPORT = 0;
     case FEATURE = 1;
     case TECH = 2;
@@ -13,11 +18,22 @@ enum TaskTypeEnum: int
     public function label(): string
     {
         return match ($this) {
-            TaskTypeEnum::SUPPORT => 'Suporte',
-            TaskTypeEnum::FEATURE => 'Feature',
-            TaskTypeEnum::TECH => 'Tech',
-            TaskTypeEnum::BUG => 'Bug',
-            TaskTypeEnum::OTHER => 'Other',
+            self::SUPPORT => 'Suporte',
+            self::FEATURE => 'Feature',
+            self::TECH => 'Tech',
+            self::BUG => 'Bug',
+            self::OTHER => 'Other',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::SUPPORT => 'gray',
+            self::FEATURE => 'blue',
+            self::TECH => 'purple',
+            self::BUG => 'red',
+            self::OTHER => 'yellow',
         };
     }
 }

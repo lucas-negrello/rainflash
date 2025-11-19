@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum PtoApprovalDecisionEnum: int
+use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
+
+enum PtoApprovalDecisionEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case REJECTED = 0;
     case APPROVED = 1;
 
@@ -12,6 +17,14 @@ enum PtoApprovalDecisionEnum: int
         return match ($this) {
             self::REJECTED => 'Rejeitado',
             self::APPROVED => 'Aprovado',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::REJECTED => 'red',
+            self::APPROVED => 'green',
         };
     }
 }

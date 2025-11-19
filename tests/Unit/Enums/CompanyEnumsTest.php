@@ -32,3 +32,17 @@ it('return an array with all objects of the enum', function () {
         expect($options[$case])->toBe($label);
     }
 });
+
+it('provides colors mapping for CompanyStatusEnum', function () {
+    expect(CompanyStatusEnum::colors())->toEqual([
+        CompanyStatusEnum::SUSPENDED->value => 'gray',
+        CompanyStatusEnum::ACTIVE->value => 'green',
+        CompanyStatusEnum::TRIAL->value => 'blue',
+    ]);
+});
+
+it('fromValue and select options for CompanyStatusEnum', function () {
+    expect(CompanyStatusEnum::fromValue(1))->toBe(CompanyStatusEnum::ACTIVE)
+        ->and(CompanyStatusEnum::dropdownOptions())->toEqual(CompanyStatusEnum::labels())
+        ->toEqual(CompanyStatusEnum::toSelectOptions());
+});

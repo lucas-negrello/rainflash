@@ -3,9 +3,12 @@
 namespace App\Enums;
 
 use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
 
 enum CompanyStatusEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case SUSPENDED = 0;
     case ACTIVE = 1;
     case TRIAL = 2;
@@ -19,12 +22,12 @@ enum CompanyStatusEnum: int implements TableEnumInterface
         };
     }
 
-    public static function labels(): array
+    public function color(): string
     {
-        return [
-            self::SUSPENDED->value => self::SUSPENDED->label(),
-            self::ACTIVE->value => self::ACTIVE->label(),
-            self::TRIAL->value => self::TRIAL->label(),
-        ];
+        return match ($this) {
+            self::SUSPENDED => 'gray',
+            self::ACTIVE => 'green',
+            self::TRIAL => 'blue',
+        };
     }
 }

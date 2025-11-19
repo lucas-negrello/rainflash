@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum WorkScheduleWeekdayEnum: int
+use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
+
+enum WorkScheduleWeekdayEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case MONDAY = 1;
     case TUESDAY = 2;
     case WEDNESDAY = 3;
@@ -12,7 +17,7 @@ enum WorkScheduleWeekdayEnum: int
     case SATURDAY = 6;
     case SUNDAY = 7;
 
-    public function label()
+    public function label(): string
     {
         return match ($this) {
             self::MONDAY => 'Segunda-feira',
@@ -25,7 +30,7 @@ enum WorkScheduleWeekdayEnum: int
         };
     }
 
-    public function shortLabel()
+    public function shortLabel(): string
     {
         return match ($this) {
             self::MONDAY => 'Seg',
@@ -38,7 +43,7 @@ enum WorkScheduleWeekdayEnum: int
         };
     }
 
-    public function abbreviation()
+    public function abbreviation(): string
     {
         return match ($this) {
             self::MONDAY => 'S',
@@ -49,5 +54,10 @@ enum WorkScheduleWeekdayEnum: int
             self::SATURDAY => 'S',
             self::SUNDAY => 'D',
         };
+    }
+
+    public function color(): string
+    {
+        return 'gray';
     }
 }

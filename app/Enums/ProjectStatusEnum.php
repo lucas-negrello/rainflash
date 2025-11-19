@@ -2,20 +2,35 @@
 
 namespace App\Enums;
 
-enum ProjectStatusEnum: int
+use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
+
+enum ProjectStatusEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case INACTIVE = 0;
     case ACTIVE = 1;
     case PENDING = 2;
     case COMPLETED = 3;
 
-    public function label()
+    public function label(): string
     {
         return match ($this) {
-            ProjectStatusEnum::INACTIVE => 'Inativo',
-            ProjectStatusEnum::ACTIVE => 'Ativo',
-            ProjectStatusEnum::PENDING => 'Pendente',
-            ProjectStatusEnum::COMPLETED => 'Completo',
+            self::INACTIVE => 'Inativo',
+            self::ACTIVE => 'Ativo',
+            self::PENDING => 'Pendente',
+            self::COMPLETED => 'Completo',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::INACTIVE => 'gray',
+            self::ACTIVE => 'green',
+            self::PENDING => 'yellow',
+            self::COMPLETED => 'blue',
         };
     }
 }

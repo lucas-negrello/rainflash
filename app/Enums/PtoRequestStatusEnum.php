@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum PtoRequestStatusEnum: int
+use App\Contracts\TableEnumInterface;
+use App\Traits\HasTableEnum;
+
+enum PtoRequestStatusEnum: int implements TableEnumInterface
 {
+    use HasTableEnum;
+
     case REQUESTED = 0;
     case APPROVED = 1;
     case REPROVED = 2;
@@ -16,6 +21,16 @@ enum PtoRequestStatusEnum: int
             self::APPROVED => 'Aprovado',
             self::REPROVED => 'Rejeitado',
             self::CANCELED => 'Cancelado',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::REQUESTED => 'blue',
+            self::APPROVED => 'green',
+            self::REPROVED => 'red',
+            self::CANCELED => 'gray',
         };
     }
 }

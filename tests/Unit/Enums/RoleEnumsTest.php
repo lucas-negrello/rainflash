@@ -23,3 +23,16 @@ it('return an array with all objects of the enum', function () {
         expect($options[$case])->toBe($label);
     }
 });
+
+it('provides colors mapping for RoleScopeEnum', function () {
+    expect(RoleScopeEnum::colors())->toEqual([
+        RoleScopeEnum::GLOBAL->value => 'purple',
+        RoleScopeEnum::COMPANY->value => 'blue',
+    ]);
+});
+
+it('fromValue and options equivalence for RoleScopeEnum', function () {
+    expect(RoleScopeEnum::fromValue(1))->toBe(RoleScopeEnum::COMPANY)
+        ->and(RoleScopeEnum::dropdownOptions())->toEqual(RoleScopeEnum::labels())
+        ->toEqual(RoleScopeEnum::toSelectOptions());
+});
