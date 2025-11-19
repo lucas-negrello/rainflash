@@ -2,8 +2,10 @@
 
 namespace App\Filament\Admin\Resources\Companies\RelationManagers;
 
+use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
@@ -79,12 +81,16 @@ class UsersRelationManager extends RelationManager
                     ]),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->label('Editar vínculo')
-                    ->schema($this->getPivotFormSchema()),
+                ActionGroup::make([
+                    EditAction::make()
+                        ->label('Editar vínculo')
+                        ->schema($this->getPivotFormSchema()),
+                    DetachAction::make()
+                        ->label('Desvincular usuário'),
+                ]),
             ])
             ->toolbarActions([
-                DetachAction::make()
+                DetachBulkAction::make()
                     ->label('Desvincular Selecionados'),
             ]);
     }

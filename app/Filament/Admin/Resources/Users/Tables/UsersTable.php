@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\Filter;
@@ -32,11 +33,13 @@ class UsersTable
 
                 IconColumn::make('email_verified_at')
                     ->label('Verificado')
+                    ->getStateUsing(fn ($record) => $record->email_verified_at !== null)
                     ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueIcon(Heroicon::CheckCircle)
+                    ->falseIcon(Heroicon::XCircle)
                     ->trueColor('success')
                     ->falseColor('danger')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
                 TextColumn::make('companies_count')
@@ -69,13 +72,15 @@ class UsersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Filter::make('verified')
-                    ->label('Email Verificado')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
-
+                Filter::make('without_company')
+                    ->label('Sem Empresa')
+                    ->query(fn (Builder $query): Builder => $query->doesntHave('companies')),
                 Filter::make('unverified')
                     ->label('Email Não Verificado')
                     ->query(fn (Builder $query): Builder => $query->whereNull('email_verified_at')),
+                Filter::make('portuguese')
+                    ->label('Usuários em Português')
+                    ->query(fn (Builder $query): Builder => $query->where('locale', 'pt_BR')),
             ])
             ->recordActions([
                 EditAction::make(),

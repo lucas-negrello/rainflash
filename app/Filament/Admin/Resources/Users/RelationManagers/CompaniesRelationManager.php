@@ -2,15 +2,22 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Models\CompanyUser;
+use App\Models\Role;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -34,21 +41,39 @@ class CompaniesRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('pivot.primary_title')
-                    ->label('Cargo'),
-
-                TextColumn::make('pivot.currency')
-                    ->label('Moeda')
-                    ->badge(),
-
                 TextColumn::make('pivot.joined_at')
                     ->label('Entrada')
                     ->dateTime('d/m/Y')
                     ->sortable(),
 
+                TextColumn::make('pivot.id')
+                    ->label('Papéis')
+                    ->getStateUsing(function ($record) {
+                        $companyUser = CompanyUser::where('company_id', $record->id)
+                            ->where('user_id', $this->getOwnerRecord()->id)
+                            ->first();
+
+                        if (!$companyUser) {
+                            return '—';
+                        }
+
+                        return $companyUser->roles->pluck('name')->join(', ') ?: '—';
+                    })
+                    ->wrap(),
+
+                TextColumn::make('pivot.currency')
+                    ->label('Moeda')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->badge(),
+
+                TextColumn::make('pivot.primary_title')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('Cargo'),
+
                 TextColumn::make('pivot.left_at')
                     ->label('Saída')
                     ->dateTime('d/m/Y')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('—'),
             ])
             ->headerActions([
@@ -65,11 +90,49 @@ class CompaniesRelationManager extends RelationManager
                     ]),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->label('Editar vínculo')
-                    ->schema($this->getPivotFormSchema()),
-                DetachAction::make()
-                    ->label('Desvincular'),
+                ActionGroup::make([
+                    EditAction::make()
+                        ->label('Editar Vínculo')
+                        ->schema($this->getPivotFormSchema()),
+                    Action::make('manage_roles')
+                        ->label('Gerenciar Papéis')
+                        ->icon(Heroicon::OutlinedKey)
+                        ->schema(function ($record) {
+                            $companyUser = CompanyUser::where('company_id', $record->id)
+                                ->where('user_id', $this->getOwnerRecord()->id)
+                                ->first();
+
+                            return [
+                                Select::make('roles')
+                                    ->label('Papéis')
+                                    ->options(Role::pluck('name', 'id'))
+                                    ->searchable()
+                                    ->multiple()
+                                    ->preload()
+                                    ->default($companyUser->roles->pluck('id')->toArray() ?? [])
+                            ];
+                        })
+                        ->action(function ($record, array $data) {
+                            $companyUser = CompanyUser::where('company_id', $record->id)
+                                ->where('user_id', $this->getOwnerRecord()->id)
+                                ->first();
+
+                            if ($companyUser) {
+                                $companyUser->roles()->sync($data['roles'] ?? []);
+
+                                Notification::make()
+                                    ->title('Papéos atualizados com sucesso.')
+                                    ->body('Os Papéis foram sincronizados com sucesso.')
+                                    ->success()
+                                    ->send();
+                            }
+                        }),
+                    DetachAction::make()
+                        ->label('Desvincular Empresa'),
+                ]),
+            ])->toolbarActions([
+                DetachBulkAction::make()
+                    ->label('Desvincular Empresas'),
             ]);
     }
 

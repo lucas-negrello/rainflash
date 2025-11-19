@@ -47,7 +47,6 @@ class UserResource extends Resource
     {
         return [
             RelationManagers\CompaniesRelationManager::class,
-            RelationManagers\RolesPermissionsRelationManager::class,
         ];
     }
 
