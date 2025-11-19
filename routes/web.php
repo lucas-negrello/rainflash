@@ -11,5 +11,10 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Redirecionar tentativas de entrar diretamente nos logins do Filament para o login unificado
+// Redirects to unified login route
 Route::redirect('/admin/login', '/login');
+Route::redirect('/user/login', '/login');
+
+// Logout routes for Filament panels
+Route::post('/user/logout', [LoginController::class, 'logout'])->name('filament.user.auth.logout');
+

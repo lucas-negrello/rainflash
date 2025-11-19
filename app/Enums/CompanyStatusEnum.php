@@ -2,13 +2,15 @@
 
 namespace App\Enums;
 
-enum CompanyStatusEnum: int
+use App\Contracts\TableEnumInterface;
+
+enum CompanyStatusEnum: int implements TableEnumInterface
 {
     case SUSPENDED = 0;
     case ACTIVE = 1;
     case TRIAL = 2;
 
-    public function label()
+    public function label(): string
     {
         return match ($this) {
             self::SUSPENDED => 'Suspensa',
@@ -17,7 +19,7 @@ enum CompanyStatusEnum: int
         };
     }
 
-    public static function labels()
+    public static function labels(): array
     {
         return [
             self::SUSPENDED->value => self::SUSPENDED->label(),

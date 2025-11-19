@@ -2,7 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
+use App\Http\Middleware\FilamentAuthenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -25,7 +25,7 @@ class UserPanelProvider extends PanelProvider
             ->default()
             ->id('user')
             ->path('/')
-            ->login()
+            ->login(null)
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -49,7 +49,7 @@ class UserPanelProvider extends PanelProvider
                 EnsureHasAnyCompany::class,
             ])
             ->authMiddleware([
-                Authenticate::class,
+                FilamentAuthenticate::class,
             ]);
     }
 }
