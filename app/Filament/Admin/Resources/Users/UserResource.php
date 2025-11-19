@@ -31,7 +31,7 @@ class UserResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Usuários';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 0;
 
     public static function form(Schema $schema): Schema
     {
@@ -47,6 +47,7 @@ class UserResource extends Resource
     {
         return [
             RelationManagers\CompaniesRelationManager::class,
+            RelationManagers\SkillsRelationManager::class,
         ];
     }
 

@@ -15,6 +15,8 @@ enum NavigationGroupEnum: string implements TableEnumInterface
     case REPORTS = 'Relatórios';
     case SETTINGS = 'Configurações';
 
+    case RESOURCES = 'Recursos';
+
     public function label(): string
     {
         return $this->value; // value already localized

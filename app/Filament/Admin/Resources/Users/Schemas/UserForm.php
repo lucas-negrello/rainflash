@@ -5,8 +5,10 @@ namespace App\Filament\Admin\Resources\Users\Schemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use App\Enums\ResourceProfileSeniorityEnum;
 
 class UserForm
 {
@@ -36,11 +38,7 @@ class UserForm
                             ->required(fn (string $context): bool => $context === 'create')
                             ->maxLength(255)
                             ->revealable(),
-                    ])
-                    ->columns(2),
 
-                Section::make('Preferências')
-                    ->schema([
                         Select::make('locale')
                             ->label('Idioma')
                             ->options([
@@ -59,19 +57,46 @@ class UserForm
                             ])
                             ->default('America/Sao_Paulo')
                             ->searchable(),
+
+                        KeyValue::make('meta')
+                            ->label('Metadados do Usuário')
+                            ->keyLabel('Chave')
+                            ->valueLabel('Valor')
+                            ->columnSpanFull()
+                            ->reorderable(),
                     ])
                     ->columns(2),
 
-                Section::make('Metadados')
+                Section::make('Perfil de Recurso')
+                    ->relationship('resourceProfile')
                     ->schema([
+                        Select::make('seniority')
+                            ->label('Senioridade')
+                            ->options(ResourceProfileSeniorityEnum::labels())
+                            ->native(false),
+
+                        TextInput::make('headline')
+                            ->label('Headline')
+                            ->maxLength(255),
+
+                        Textarea::make('bio')
+                            ->label('Bio')
+                            ->rows(3)
+                            ->columnSpanFull(),
+
+                        TextInput::make('location')
+                            ->label('Localização')
+                            ->columnSpanFull()
+                            ->maxLength(255),
+
                         KeyValue::make('meta')
-                            ->label('Metadados Adicionais')
+                            ->label('Metadados do Perfil')
                             ->keyLabel('Chave')
                             ->valueLabel('Valor')
+                            ->columnSpanFull()
                             ->reorderable(),
                     ])
-                    ->collapsible()
-                    ->collapsed(),
+                    ->columns(2),
             ]);
     }
 }
