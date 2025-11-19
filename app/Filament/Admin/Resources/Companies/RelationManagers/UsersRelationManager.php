@@ -72,12 +72,10 @@ class UsersRelationManager extends RelationManager
                 AttachAction::make()
                     ->label('Vincular usuário')
                     ->preloadRecordSelect()
-                    ->recordSelect(function (AttachAction $action) {
-                        return $action->getRecordSelect()
+                    ->recordSelect(fn ($select) => $select
                             ->label('Usuário')
                             ->searchable()
-                            ->relationship('users', 'email');
-                    })
+                    )
                     ->schema($this->getPivotFormSchema()),
             ])
             ->recordActions([

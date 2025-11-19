@@ -58,10 +58,9 @@ class CompaniesRelationManager extends RelationManager
                 AttachAction::make()
                     ->label('Vincular empresa')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn (AttachAction $action) => $action->getRecordSelect()
+                    ->recordSelect(fn ($select) => $select
                         ->label('Empresa')
-                        ->searchable()
-                        ->relationship('companies', 'name'),
+                        ->searchable(),
                     )
                     ->schema($this->getPivotFormSchema()),
             ])

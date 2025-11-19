@@ -4,13 +4,10 @@ namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
 use App\Models\CompanyUser;
 use App\Models\Role;
-use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
-use Filament\Forms\Components\Select;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Notifications\Notification;
@@ -44,10 +41,10 @@ class RolesPermissionsRelationManager extends RelationManager
             ->headerActions([
                 AttachAction::make()
                     ->label('Adicionar permissão')
-                    ->recordSelect(fn (AttachAction $action) => $action->getRecordSelect()
+                    ->preloadRecordSelect()
+                    ->recordSelect(fn ($select) => $select
                         ->label('Permissão')
-                        ->searchable()
-                        ->relationship('permissions', 'name'),
+                        ->searchable(),
                     ),
             ])
             ->recordActions([
