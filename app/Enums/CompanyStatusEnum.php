@@ -25,9 +25,9 @@ enum CompanyStatusEnum: int implements TableEnumInterface
     public function color(): string
     {
         return match ($this) {
-            self::SUSPENDED => 'gray',
-            self::ACTIVE => 'green',
-            self::TRIAL => 'blue',
+            self::SUSPENDED => 'danger',
+            self::ACTIVE => 'success',
+            self::TRIAL => 'warning',
         };
     }
 }

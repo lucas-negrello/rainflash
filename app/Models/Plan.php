@@ -34,20 +34,15 @@ class Plan extends Model
                     ->withTimestamps();
     }
 
-    public function companies(): BelongsToMany
-    {
-        return $this->belongsToMany(Company::class, 'company_subscriptions')
-                    ->withPivot('status', 'seats_limit', 'period_start', 'period_end', 'trial_end', 'meta')
-                    ->withTimestamps();
-    }
-
     public function planFeatures(): HasMany
     {
         return $this->hasMany(PlanFeature::class);
     }
 
-    public function companySubscriptions(): HasMany
+
+    // Companies using this plan currently
+    public function companies(): HasMany
     {
-        return $this->hasMany(CompanySubscription::class);
+        return $this->hasMany(Company::class, 'current_plan_id');
     }
 }

@@ -47,6 +47,10 @@ return new class extends Migration
                 ->on('company_user')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+
+            $table->index(['project_id', 'status'], 'tasks_project_status_idx');
+            $table->index('assignee_company_user_id', 'tasks_assignee_idx');
+            $table->index('created_by_company_user_id', 'tasks_creator_idx');
         });
     }
 

@@ -2,8 +2,12 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Filament\Shared\Schemas\CompanyUserRelationSchema;
 use App\Models\CompanyUser;
 use App\Models\Role;
+use App\Models\Permission;
+use App\Enums\RoleScopeEnum;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
@@ -86,32 +90,81 @@ class CompaniesRelationManager extends RelationManager
                             ->multiple()
                             ->label('Empresa')
                             ->searchable(),
-                        ...$this->getPivotFormSchema()
+                        ...CompanyUserRelationSchema::getBase()
                     ]),
             ])
             ->recordActions([
                 ActionGroup::make([
                     EditAction::make()
                         ->label('Editar Vínculo')
-                        ->schema($this->getPivotFormSchema()),
+                        ->schema(CompanyUserRelationSchema::getBase()),
                     Action::make('manage_roles')
                         ->label('Gerenciar Papéis')
                         ->icon(Heroicon::OutlinedKey)
-                        ->schema(function ($record) {
+                        ->modalHeading('Gerenciar Papéis do Usuário')
+                        ->fillForm(function ($record) {
                             $companyUser = CompanyUser::where('company_id', $record->id)
                                 ->where('user_id', $this->getOwnerRecord()->id)
                                 ->first();
 
                             return [
-                                Select::make('roles')
-                                    ->label('Papéis')
-                                    ->options(Role::pluck('name', 'id'))
-                                    ->searchable()
-                                    ->multiple()
-                                    ->preload()
-                                    ->default($companyUser->roles->pluck('id')->toArray() ?? [])
+                                'roles' => $companyUser?->roles->pluck('id')->toArray() ?? [],
                             ];
                         })
+                        ->form([
+                            Select::make('roles')
+                                ->label('Papéis')
+                                ->options(fn () => Role::orderBy('name')->pluck('name', 'id'))
+                                ->searchable()
+                                ->multiple()
+                                ->preload()
+                                ->createOptionForm([
+                                    TextInput::make('name')
+                                        ->label('Nome do Papel')
+                                        ->required()
+                                        ->maxLength(255)
+                                        ->live(onBlur: true)
+                                        ->afterStateUpdated(fn ($state, callable $set) => $set('key', Str::slug($state))),
+
+                                    TextInput::make('key')
+                                        ->label('Chave (Key)')
+                                        ->required()
+                                        ->maxLength(255)
+                                        ->alphaDash()
+                                        ->unique(table: Role::class, column: 'key'),
+
+                                    Select::make('scope')
+                                        ->label('Escopo')
+                                        ->options(RoleScopeEnum::labels())
+                                        ->default(RoleScopeEnum::COMPANY->value)
+                                        ->required()
+                                        ->native(false),
+
+                                    Select::make('permissions')
+                                        ->label('Permissões')
+                                        ->options(fn () => Permission::orderBy('name')->pluck('name','id'))
+                                        ->multiple()
+                                        ->searchable()
+                                        ->preload(),
+                                ])
+                                ->createOptionUsing(function (array $data): int {
+                                    $permissions = $data['permissions'] ?? [];
+                                    unset($data['permissions']);
+
+                                    $role = Role::create([
+                                        'name' => $data['name'],
+                                        'key' => $data['key'],
+                                        'scope' => $data['scope'] ?? RoleScopeEnum::COMPANY->value,
+                                    ]);
+
+                                    if (!empty($permissions)) {
+                                        $role->permissions()->sync($permissions);
+                                    }
+
+                                    return $role->id;
+                                })
+                                ->createOptionModalHeading('Criar Novo Papel'),
+                        ])
                         ->action(function ($record, array $data) {
                             $companyUser = CompanyUser::where('company_id', $record->id)
                                 ->where('user_id', $this->getOwnerRecord()->id)
@@ -121,8 +174,8 @@ class CompaniesRelationManager extends RelationManager
                                 $companyUser->roles()->sync($data['roles'] ?? []);
 
                                 Notification::make()
-                                    ->title('Papéos atualizados com sucesso.')
-                                    ->body('Os Papéis foram sincronizados com sucesso.')
+                                    ->title('Papéis atualizados')
+                                    ->body('Os papéis do usuário foram sincronizados com sucesso.')
                                     ->success()
                                     ->send();
                             }
@@ -134,43 +187,5 @@ class CompaniesRelationManager extends RelationManager
                 DetachBulkAction::make()
                     ->label('Desvincular Empresas'),
             ]);
-    }
-
-    protected function getPivotFormSchema(): array
-    {
-        return [
-            TextInput::make('primary_title')
-                ->label('Cargo/Título')
-                ->maxLength(255),
-
-            Select::make('currency')
-                ->label('Moeda')
-                ->options([
-                    'BRL' => 'Real (BRL)',
-                    'USD' => 'Dólar (USD)',
-                    'EUR' => 'Euro (EUR)',
-                ])
-                ->default('BRL'),
-
-            Toggle::make('active')
-                ->label('Ativo')
-                ->default(true),
-
-            DateTimePicker::make('joined_at')
-                ->label('Data de entrada')
-                ->displayFormat('d/m/Y')
-                ->default(now()),
-
-            DateTimePicker::make('left_at')
-                ->label('Data de saída')
-                ->displayFormat('d/m/Y'),
-
-            KeyValue::make('meta')
-                ->label('Metadados (opcional)')
-                ->keyLabel('Chave')
-                ->valueLabel('Valor')
-                ->default([])
-                ->dehydrateStateUsing(fn ($state) => empty($state) ? null : $state),
-        ];
     }
 }

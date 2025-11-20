@@ -1,8 +1,10 @@
 <?php
 
 use App\Enums\CompanyStatusEnum;
-use App\Models\{Company, ReportJob, AuditLog, User, Team, PtoRequest, CompanyWebhook, Calendar, Plan, CompanySubscription, Feature, CompanyFeatureOverride, Project, Task, TimeEntry, Assignment, CompanyUser};
-use Database\Factories\{CompanyFactory, PlanFactory, CompanySubscriptionFactory, FeatureFactory, CompanyFeatureOverrideFactory, ProjectFactory, TaskFactory, TimeEntryFactory, AssignmentFactory, CompanyUserFactory};
+use App\Enums\CompanySubscriptionStatusEnum;
+use App\Enums\FeatureTypeEnum;
+use App\Models\{Company, ReportJob, AuditLog, User, Team, PtoRequest, CompanyWebhook, Calendar, Plan, Feature, CompanyFeatureOverride, Project, Task, TimeEntry, Assignment, CompanyUser};
+use Database\Factories\{CompanyFactory, PlanFactory, FeatureFactory, CompanyFeatureOverrideFactory, ProjectFactory, TaskFactory, TimeEntryFactory, AssignmentFactory, CompanyUserFactory};
 
 it('casts and fillables on Company', function () {
     $company = Company::factory()->make([
@@ -65,44 +67,48 @@ it('has many projects', function () {
     expect($company->projects()->count())->toBe(2);
 });
 
-it('has subscriptions and feature overrides and features pivot data', function () {
+it('has feature overrides with pivot data', function () {
     $plan = PlanFactory::new()->create();
-    $company = CompanyFactory::new()->create(['status' => CompanyStatusEnum::ACTIVE]);
-    CompanySubscriptionFactory::new()->create(['company_id' => $company->id, 'plan_id' => $plan->id]);
+    $company = CompanyFactory::new()->create([
+        'status' => CompanyStatusEnum::ACTIVE,
+        'current_plan_id' => $plan->id,
+        'subscription_status' => CompanySubscriptionStatusEnum::ACTIVE,
+        'subscription_period_start' => now(),
+        'subscription_period_end' => now()->addMonth(),
+    ]);
 
-    $feature = FeatureFactory::new()->create();
+    $feature = FeatureFactory::new()->create(['type' => FeatureTypeEnum::LIMIT]);
     CompanyFeatureOverrideFactory::new()->create(['company_id' => $company->id, 'feature_id' => $feature->id, 'value' => ['limit' => 5], 'meta' => ['reason' => 'ok']]);
 
-    $featureRelation = $company->features()->first();
-    $pivotValue = $featureRelation->pivot->value;
-    $pivotMeta = $featureRelation->pivot->meta;
-    $decodedValue = is_string($pivotValue) ? json_decode($pivotValue, true) : $pivotValue;
-    $decodedMeta = is_string($pivotMeta) ? json_decode($pivotMeta, true) : $pivotMeta;
+    $override = $company->companyFeatureOverrides()->first();
+    $decodedValue = is_string($override->value) ? json_decode($override->value, true) : $override->value;
+    $decodedMeta = is_string($override->meta) ? json_decode($override->meta, true) : $override->meta;
 
-    expect($company->companySubscriptions()->count())->toBe(1)
-        ->and($company->companyFeatureOverrides()->count())->toBe(1)
-        ->and($company->features()->count())->toBe(1)
+    expect($company->companyFeatureOverrides()->count())->toBe(1)
         ->and($decodedValue)->toBe(['limit' => 5])
-        ->and($decodedMeta)->toBe(['reason' => 'ok']);
+        ->and($decodedMeta)->toBe(['reason' => 'ok'])
+        ->and($company->currentPlan->id)->toBe($plan->id);
 });
 
-it('relates plans via subscriptions and resolves currentPlan', function () {
+it('has currentPlan relationship', function () {
     $company = CompanyFactory::new()->create();
-    $planOld = PlanFactory::new()->create();
-    $planNew = PlanFactory::new()->create();
+    $plan = PlanFactory::new()->create();
 
-    CompanySubscriptionFactory::new()->create(['company_id' => $company->id, 'plan_id' => $planOld->id, 'period_start' => now()->subMonths(2), 'period_end' => now()->subMonth()]);
-    CompanySubscriptionFactory::new()->create(['company_id' => $company->id, 'plan_id' => $planNew->id, 'period_start' => now()->subWeek(), 'period_end' => now()->addWeek()]);
+    // Set current plan
+    $company->update([
+        'current_plan_id' => $plan->id,
+        'subscription_status' => CompanySubscriptionStatusEnum::ACTIVE,
+        'subscription_period_start' => now(),
+        'subscription_period_end' => now()->addMonth(),
+    ]);
 
-    $current = $company->currentPlan();
-
-    expect($company->plans()->count())->toBe(2)
-        ->and($current->id)->toBe($planNew->id);
+    expect($company->currentPlan)->not->toBeNull()
+        ->and($company->currentPlan->id)->toBe($plan->id);
 });
 
-it('returns null currentPlan when no subscriptions', function () {
+it('returns null currentPlan when no plan set', function () {
     $company = CompanyFactory::new()->create();
-    expect($company->currentPlan())->toBeNull();
+    expect($company->currentPlan)->toBeNull();
 });
 
 it('relations smoke test invokes all relation methods', function () {
@@ -115,7 +121,12 @@ it('relations smoke test invokes all relation methods', function () {
     CompanyWebhook::factory()->create(['company_id' => $company->id]);
     Calendar::factory()->create(['company_id' => $company->id]);
     $plan = PlanFactory::new()->create();
-    CompanySubscriptionFactory::new()->create(['company_id' => $company->id, 'plan_id' => $plan->id, 'period_start' => now()->subDay(), 'period_end' => now()->addDay()]);
+    $company->update([
+        'current_plan_id' => $plan->id,
+        'subscription_status' => \App\Enums\CompanySubscriptionStatusEnum::ACTIVE,
+        'subscription_period_start' => now()->subDay(),
+        'subscription_period_end' => now()->addDay(),
+    ]);
     $feature = FeatureFactory::new()->create();
     CompanyFeatureOverrideFactory::new()->create(['company_id' => $company->id, 'feature_id' => $feature->id]);
     $projectA = ProjectFactory::new()->create(['company_id' => $company->id]);
@@ -128,11 +139,8 @@ it('relations smoke test invokes all relation methods', function () {
         ->and($company->ptoRequests()->count())->toBe(1)
         ->and($company->webhooks()->count())->toBe(1)
         ->and($company->calendars()->count())->toBe(1)
-        ->and($company->companySubscriptions()->count())->toBe(1)
         ->and($company->companyFeatureOverrides()->count())->toBe(1)
-        ->and($company->features()->count())->toBe(1)
-        ->and($company->plans()->count())->toBe(1)
-        ->and($company->currentPlan())->toBeInstanceOf(\App\Models\Plan::class)
+        ->and($company->currentPlan)->toBeInstanceOf(Plan::class)
         ->and($company->projects()->count())->toBe(1);
 });
 

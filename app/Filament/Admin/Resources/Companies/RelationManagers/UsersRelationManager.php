@@ -2,20 +2,19 @@
 
 namespace App\Filament\Admin\Resources\Companies\RelationManagers;
 
+use App\Filament\Shared\Schemas\CompanyUserRelationSchema;
+use App\Filament\Shared\Schemas\RoleAttachSchema;
+use App\Filament\Shared\Tables\UsersTable;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\KeyValue;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
+use App\Models\CompanyUser;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
 
 class UsersRelationManager extends RelationManager
@@ -33,40 +32,9 @@ class UsersRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->label('Nome')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable()
-                    ->copyable()
-                    ->sortable(),
-
-                IconColumn::make('pivot.active')
-                    ->label('Ativo')
-                    ->boolean()
-                    ->trueIcon(Heroicon::CheckCircle)
-                    ->falseIcon(Heroicon::XCircle)
-                    ->trueColor('success')
-                    ->falseColor('danger'),
-
-                TextColumn::make('pivot.currency')
-                    ->label('Moeda')
-                    ->badge(),
-
-                TextColumn::make('pivot.joined_at')
-                    ->label('Data de Entrada')
-                    ->date('d/m/Y')
-                    ->sortable(),
-
-                TextColumn::make('pivot.left_at')
-                    ->label('Data de Saída')
-                    ->date('d/m/Y')
-                    ->placeholder('-'),
-            ])
+            ->columns(UsersTable::getBase())
+            ->filters(UsersTable::getFilters())
+            ->columnManagerMaxHeight('400px')
             ->headerActions([
                 AttachAction::make()
                     ->label('Vincular usuário')
@@ -77,14 +45,44 @@ class UsersRelationManager extends RelationManager
                             ->label('Usuário')
                             ->searchable()
                             ->multiple(),
-                        ...$this->getPivotFormSchema()
+                        ...CompanyUserRelationSchema::getBase()
                     ]),
             ])
             ->recordActions([
                 ActionGroup::make([
                     EditAction::make()
                         ->label('Editar vínculo')
-                        ->schema($this->getPivotFormSchema()),
+                        ->schema(CompanyUserRelationSchema::getBase()),
+
+                    Action::make('manage_roles')
+                        ->label('Gerenciar Papéis')
+                        ->icon(Heroicon::OutlinedKey)
+                        ->modalHeading('Gerenciar Papéis do Usuário')
+                        ->fillForm(function ($record) {
+                            $companyUser = CompanyUser::where('company_id', $this->getOwnerRecord()->id)
+                                ->where('user_id', $record->id)
+                                ->first();
+
+                            return [
+                                'roles' => $companyUser?->roles->pluck('id')->toArray() ?? [],
+                            ];
+                        })
+                        ->schema(RoleAttachSchema::getBase())
+                        ->action(function ($record, array $data) {
+                            $companyUser = CompanyUser::where('company_id', $this->getOwnerRecord()->id)
+                                ->where('user_id', $record->id)
+                                ->first();
+
+                            if ($companyUser) {
+                                $companyUser->roles()->sync($data['roles'] ?? []);
+
+                                Notification::make()
+                                    ->title('Papéis atualizados')
+                                    ->body('Os papéis do usuário foram sincronizados com sucesso.')
+                                    ->success()
+                                    ->send();
+                            }
+                        }),
                     DetachAction::make()
                         ->label('Desvincular usuário'),
                 ]),
@@ -93,43 +91,5 @@ class UsersRelationManager extends RelationManager
                 DetachBulkAction::make()
                     ->label('Desvincular Selecionados'),
             ]);
-    }
-
-    protected function getPivotFormSchema(): array
-    {
-        return [
-            TextInput::make('primary_title')
-                ->label('Cargo/Título')
-                ->maxLength(255),
-
-            Select::make('currency')
-                ->label('Moeda')
-                ->options([
-                    'BRL' => 'Real (BRL)',
-                    'USD' => 'Dólar (USD)',
-                    'EUR' => 'Euro (EUR)',
-                ])
-                ->default('BRL'),
-
-            Toggle::make('active')
-                ->label('Ativo')
-                ->default(true),
-
-            DateTimePicker::make('joined_at')
-                ->label('Data de entrada')
-                ->displayFormat('d/m/Y')
-                ->default(now()),
-
-            DateTimePicker::make('left_at')
-                ->label('Data de saída')
-                ->displayFormat('d/m/Y'),
-
-            KeyValue::make('meta')
-                ->label('Metadados (opcional)')
-                ->keyLabel('Chave')
-                ->valueLabel('Valor')
-                ->default([])
-                ->dehydrateStateUsing(fn ($state) => empty($state) ? null : $state),
-        ];
     }
 }

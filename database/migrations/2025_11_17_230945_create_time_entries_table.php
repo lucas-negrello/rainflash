@@ -54,9 +54,11 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('set null');
 
+            $table->index('task_id', 'time_entries_task_idx');
             $table->index(['created_by_company_user_id', 'started_at']);
             $table->index(['project_id', 'started_at']);
             $table->index(['reviewed_by_company_user_id', 'approved_at']);
+
         });
     }
 

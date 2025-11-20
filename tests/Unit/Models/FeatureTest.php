@@ -12,9 +12,8 @@ it('creates Feature with casts and relations', function () {
     $company = CompanyFactory::new()->create();
     CompanyFeatureOverrideFactory::new()->create(['company_id' => $company->id, 'feature_id' => $feature->id]);
 
-    expect($feature->plans()->count())->toBe(1)
-        ->and($feature->planFeatures()->count())->toBe(1)
-        ->and($feature->companies()->count())->toBe(1)
+    expect($feature->planFeatures()->count())->toBe(1)
         ->and($feature->companyFeatureOverrides()->count())->toBe(1)
-        ->and($feature->meta)->toBeArray();
+        ->and($feature->meta)->toBeArray()
+        ->and($feature->type)->toBeInstanceOf(\App\Enums\FeatureTypeEnum::class);
 });

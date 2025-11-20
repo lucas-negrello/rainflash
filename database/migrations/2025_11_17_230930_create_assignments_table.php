@@ -40,6 +40,9 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->unique(['project_id', 'company_user_id', 'effective_from']);
+
+            $table->index('project_id', 'assignments_project_idx');
+            $table->index('company_user_id', 'assignments_company_user_idx');
         });
     }
 

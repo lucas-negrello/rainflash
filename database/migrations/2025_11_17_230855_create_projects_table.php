@@ -32,6 +32,9 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->unique(['company_id', 'code'])->nullsNotDistinct();
+
+            $table->index(['company_id', 'status'], 'projects_company_status_idx');
+            $table->index(['company_id', 'type'], 'projects_company_type_idx');
         });
     }
 

@@ -14,7 +14,6 @@ enum NavigationGroupEnum: string implements TableEnumInterface
     case FINANCE = 'Financeiro';
     case REPORTS = 'Relatórios';
     case SETTINGS = 'Configurações';
-
     case RESOURCES = 'Recursos';
 
     public function label(): string

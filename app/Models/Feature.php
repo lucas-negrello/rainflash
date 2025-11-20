@@ -5,9 +5,8 @@ namespace App\Models;
 use App\Enums\FeatureTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Feature extends Model
 {
@@ -37,17 +36,10 @@ class Feature extends Model
         return $this->hasMany(CompanyFeatureOverride::class);
     }
 
-    public function companies(): BelongsToMany
-    {
-        return $this->belongsToMany(Company::class, 'company_feature_overrides')
-                    ->withPivot('value', 'meta')
-                    ->withTimestamps();
-    }
-
     public function plans(): BelongsToMany
     {
         return $this->belongsToMany(Plan::class, 'plan_features')
-                    ->withPivot('value', 'meta')
-                    ->withTimestamps();
+            ->withPivot(['value', 'meta'])
+            ->withTimestamps();
     }
 }

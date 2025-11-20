@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('feature_id');
 
-            $table->jsonb('value');
+            $table->text('value');
             $table->jsonb('meta')->nullable();
 
             $table->timestamps();
@@ -33,6 +33,8 @@ return new class extends Migration
                 ->on('features')
                 ->onUpdate('cascade')
                 ->onDelete('restrict');
+
+            $table->index('feature_id', 'company_feature_overrides_feature_idx');
 
             $table->unique(['company_id', 'feature_id']);
         });

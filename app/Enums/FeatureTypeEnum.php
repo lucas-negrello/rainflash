@@ -25,9 +25,9 @@ enum FeatureTypeEnum: int implements TableEnumInterface
     public function color(): string
     {
         return match ($this) {
-            self::BOOLEAN => 'blue',
-            self::LIMIT => 'orange',
-            self::TIER => 'purple',
+            self::BOOLEAN => 'primary',
+            self::LIMIT => 'secondary',
+            self::TIER => 'warning',
         };
     }
 }

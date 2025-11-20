@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('plan_id');
             $table->unsignedBigInteger('feature_id');
 
-            $table->jsonb('value');
+            $table->text('value');
             $table->jsonb('meta')->nullable();
 
             $table->timestamps();
@@ -33,6 +33,10 @@ return new class extends Migration
                 ->on('features')
                 ->onUpdate('cascade')
                 ->onDelete('restrict');
+
+            $table->unique(['plan_id', 'feature_id'], 'plan_features_unique_plan_feature');
+            $table->index('plan_id', 'plan_features_plan_idx');
+            $table->index('feature_id', 'plan_features_feature_idx');
         });
     }
 

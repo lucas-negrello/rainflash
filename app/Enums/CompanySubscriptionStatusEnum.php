@@ -27,10 +27,10 @@ enum CompanySubscriptionStatusEnum: int implements TableEnumInterface
     public function color(): string
     {
         return match ($this) {
-            self::CANCELLED => 'gray',
-            self::ACTIVE => 'green',
-            self::PAST_DUE => 'yellow',
-            self::TRIAL => 'blue',
+            self::CANCELLED => 'danger',
+            self::ACTIVE => 'success',
+            self::PAST_DUE => 'warning',
+            self::TRIAL => 'secondary',
         };
     }
 }
