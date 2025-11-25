@@ -48,22 +48,17 @@ class RoleForm
 
                         Textarea::make('description')
                             ->label('Descrição')
-                            ->rows(3)
-                            ->columnSpanFull()
+                            ->rows(2)
                             ->helperText('Descrição detalhada sobre as responsabilidades desta role'),
-                    ])
-                    ->columns(2),
 
-                Section::make('Metadados')
-                    ->schema([
                         KeyValue::make('meta')
                             ->label('Metadados Adicionais')
                             ->keyLabel('Chave')
                             ->valueLabel('Valor')
+                            ->columnSpanFull()
                             ->reorderable(),
                     ])
-                    ->collapsible()
-                    ->collapsed(),
-            ]);
+                    ->columns(2),
+            ])->columns(1);
     }
 }

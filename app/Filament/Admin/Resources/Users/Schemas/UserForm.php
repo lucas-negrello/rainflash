@@ -21,7 +21,6 @@ class UserForm
                         TextInput::make('name')
                             ->label('Nome')
                             ->required()
-                            ->columnSpanFull()
                             ->maxLength(255),
 
                         TextInput::make('email')
@@ -37,7 +36,8 @@ class UserForm
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $context): bool => $context === 'create')
                             ->maxLength(255)
-                            ->revealable(),
+                            ->revealable()
+                            ->hiddenOn(['edit', 'view']),
 
                         Select::make('locale')
                             ->label('Idioma')
@@ -96,7 +96,9 @@ class UserForm
                             ->columnSpanFull()
                             ->reorderable(),
                     ])
+                    ->collapsible()
+                    ->collapsed()
                     ->columns(2),
-            ]);
+            ])->columns(1);
     }
 }

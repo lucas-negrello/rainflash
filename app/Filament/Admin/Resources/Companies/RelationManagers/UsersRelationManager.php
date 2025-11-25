@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\Companies\RelationManagers;
 
 use App\Filament\Shared\Schemas\CompanyUserRelationSchema;
 use App\Filament\Shared\Schemas\RoleAttachSchema;
-use App\Filament\Shared\Tables\UsersTable;
+use App\Filament\Shared\Tables\UsersTable as SharedUsersTable;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
@@ -32,8 +32,8 @@ class UsersRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->columns(UsersTable::getBase())
-            ->filters(UsersTable::getFilters())
+            ->columns(SharedUsersTable::getBase(includeRelationshipFields: true))
+            ->filters(SharedUsersTable::getFilters())
             ->columnManagerMaxHeight('400px')
             ->headerActions([
                 AttachAction::make()

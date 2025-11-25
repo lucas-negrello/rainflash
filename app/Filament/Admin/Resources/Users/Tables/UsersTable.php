@@ -2,86 +2,23 @@
 
 namespace App\Filament\Admin\Resources\Users\Tables;
 
+use App\Filament\Shared\Tables\UsersTable as SharedUsersTable;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class UsersTable
 {
     public static function configure(Table $table): Table
     {
+        $columns = SharedUsersTable::getBase();
+        $filters = SharedUsersTable::getFilters();
+
         return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->label('Nome')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable()
-                    ->sortable()
-                    ->copyable()
-                    ->icon('heroicon-o-envelope'),
-
-                IconColumn::make('email_verified_at')
-                    ->label('Verificado')
-                    ->getStateUsing(fn ($record) => $record->email_verified_at !== null)
-                    ->boolean()
-                    ->trueIcon(Heroicon::CheckCircle)
-                    ->falseIcon(Heroicon::XCircle)
-                    ->trueColor('success')
-                    ->falseColor('danger')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->sortable(),
-
-                TextColumn::make('companies_count')
-                    ->label('Empresas')
-                    ->counts('companies')
-                    ->badge()
-                    ->color('success'),
-
-                TextColumn::make('locale')
-                    ->label('Idioma')
-                    ->badge()
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('timezone')
-                    ->label('Fuso Horário')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('created_at')
-                    ->label('Criado em')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('updated_at')
-                    ->label('Atualizado em')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                Filter::make('without_company')
-                    ->label('Sem Empresa')
-                    ->query(fn (Builder $query): Builder => $query->doesntHave('companies')),
-                Filter::make('unverified')
-                    ->label('Email Não Verificado')
-                    ->query(fn (Builder $query): Builder => $query->whereNull('email_verified_at')),
-                Filter::make('portuguese')
-                    ->label('Usuários em Português')
-                    ->query(fn (Builder $query): Builder => $query->where('locale', 'pt_BR')),
-            ])
+            ->columns($columns)
+            ->filters($filters)
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
@@ -91,6 +28,9 @@ class UsersTable
                     DeleteBulkAction::make(),
                 ]),
             ])
+            ->columnManagerMaxHeight('300px')
+            ->defaultPaginationPageOption(5)
+            ->paginationPageOptions([5, 10, 25, 50, 100])
             ->defaultSort('created_at', 'desc');
     }
 }

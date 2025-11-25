@@ -60,4 +60,9 @@ class PlanResource extends Resource
             'edit' => EditPlan::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return self::getModel()::count();
+    }
 }

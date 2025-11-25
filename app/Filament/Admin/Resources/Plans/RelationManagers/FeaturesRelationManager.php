@@ -4,6 +4,8 @@ namespace App\Filament\Admin\Resources\Plans\RelationManagers;
 
 use App\Enums\FeatureTierOptionsEnum;
 use App\Enums\FeatureTypeEnum;
+use App\Filament\Shared\Schemas\FeatureSchema;
+use App\Filament\Shared\Tables\FeaturesTable as SharedFeaturesTable;
 use App\Models\Feature;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
@@ -14,11 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
-use Illuminate\Support\Str;
 
 class FeaturesRelationManager extends RelationManager
 {
@@ -37,63 +35,7 @@ class FeaturesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->label('Nome')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('key')
-                    ->label('Chave')
-                    ->searchable()
-                    ->sortable()
-                    ->copyable(),
-
-                TextColumn::make('type')
-                    ->label('Tipo')
-                    ->badge()
-                    ->formatStateUsing(fn ($state) => $state ? $state->label() : '—')
-                    ->color(fn ($state) => $state ? $state->color() : 'gray')
-                    ->sortable(),
-
-                TextColumn::make('pivot.value')
-                    ->label('Valor')
-                    ->formatStateUsing(function ($state, $record) {
-                        try {
-                            $tier = FeatureTierOptionsEnum::fromValue((int) $state);
-                        } catch (\Exception $e) {
-                            $tier = FeatureTierOptionsEnum::BASIC;
-                        }
-
-                        return match($record->type) {
-                            FeatureTypeEnum::BOOLEAN => filter_var($state, FILTER_VALIDATE_BOOLEAN) ? '✓ Sim' : '✗ Não',
-                            FeatureTypeEnum::LIMIT => "Limite: {$state}",
-                            FeatureTypeEnum::TIER => "Nível: {$tier->label()}",
-                            default => $state ?? '—',
-                        };
-                    })
-                    ->badge()
-                    ->color(function ($state, $record) {
-                        try {
-                            $tier = FeatureTierOptionsEnum::fromValue((int) $state);
-                        } catch (\Exception $e) {
-                            $tier = FeatureTierOptionsEnum::BASIC;
-                        }
-
-                        return match($record->type) {
-                            FeatureTypeEnum::BOOLEAN => filter_var($state, FILTER_VALIDATE_BOOLEAN) ? 'success' : 'danger',
-                            FeatureTypeEnum::LIMIT => FeatureTypeEnum::LIMIT->color(),
-                            FeatureTypeEnum::TIER => $tier->color(),
-                            default => 'gray',
-                        };
-                    }),
-
-                TextColumn::make('pivot.created_at')
-                    ->label('Adicionado em')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ->columns(SharedFeaturesTable::getBase(includeRelationshipFields: true))
             ->headerActions([
                 AttachAction::make()
                     ->label('Adicionar Feature')
@@ -109,34 +51,7 @@ class FeaturesRelationManager extends RelationManager
                                 ->reactive()
                                 ->live()
                                 ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name} ({$record->key})")
-                                ->createOptionForm([
-                                    TextInput::make('name')
-                                        ->label('Nome')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->live(onBlur: true)
-                                        ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
-                                            if (!$get('key') && $state) {
-                                                $set('key', Str::slug($state));
-                                            }
-                                        }),
-                                    TextInput::make('key')
-                                        ->label('Chave (Key)')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->unique(table: Feature::class, column: 'key')
-                                        ->alphaDash(),
-                                    Select::make('type')
-                                        ->label('Tipo')
-                                        ->options(FeatureTypeEnum::labels())
-                                        ->native(false)
-                                        ->required(),
-                                    KeyValue::make('meta')
-                                        ->label('Metadados (opcional)')
-                                        ->keyLabel('Chave')
-                                        ->valueLabel('Valor')
-                                        ->default([]),
-                                ])
+                                ->createOptionForm(FeatureSchema::getBase(useRelationshipFields: true))
                                 ->createOptionUsing(function (array $data): int {
                                     return Feature::create($data)->id;
                                 })
@@ -178,7 +93,7 @@ class FeaturesRelationManager extends RelationManager
                         $plan = $this->getOwnerRecord();
                         $feature = Feature::find($data['recordId'] ?? null);
 
-                        $value = 'true'; // default
+                        $value = 'true';
                         if ($feature) {
                             $type = $feature->type;
                             if ($type === FeatureTypeEnum::BOOLEAN) {

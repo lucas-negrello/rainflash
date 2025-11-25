@@ -52,20 +52,15 @@ class SkillForm
                                 'Cloud',
                                 'Security',
                             ]),
-                    ])
-                    ->columns(2),
 
-                Section::make('Metadados')
-                    ->schema([
                         KeyValue::make('meta')
                             ->label('Metadados Adicionais')
                             ->keyLabel('Chave')
                             ->valueLabel('Valor')
                             ->reorderable(),
                     ])
-                    ->collapsible()
-                    ->collapsed(),
-            ]);
+                    ->columns(2),
+            ])->columns(1);
     }
 }
 

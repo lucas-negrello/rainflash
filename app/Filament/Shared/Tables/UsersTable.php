@@ -2,11 +2,7 @@
 
 namespace App\Filament\Shared\Tables;
 
-use Filament\Actions\ActionGroup;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use App\Contracts\Filament\SharedFilamentTable;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\IconColumn;
@@ -14,47 +10,54 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
-class UsersTable
+class UsersTable implements SharedFilamentTable
 {
-    public static function getBase(array $extraFields = []): array
+    public static function getBase(array $extraFields = [], bool $includeRelationshipFields = false): array
     {
+        $userColumns = [
+            TextColumn::make('name')
+                ->label('Nome')
+                ->searchable()
+                ->sortable(),
+
+            TextColumn::make('email')
+                ->label('Email')
+                ->searchable()
+                ->sortable()
+                ->copyable()
+                ->icon('heroicon-o-envelope'),
+
+            IconColumn::make('email_verified_at')
+                ->label('Verificado')
+                ->getStateUsing(fn ($record) => $record->email_verified_at !== null)
+                ->boolean()
+                ->trueIcon(Heroicon::CheckCircle)
+                ->falseIcon(Heroicon::XCircle)
+                ->trueColor('success')
+                ->falseColor('danger')
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->sortable(),
+        ];
+
+        // Adiciona campos de relacionamento apenas se estiver em um RelationManager
+        if ($includeRelationshipFields) {
+            $userColumns[] = IconColumn::make('active')
+                ->label('Ativo')
+                ->getStateUsing(fn ($record) => $record->pivot?->active ?? false)
+                ->boolean()
+                ->trueIcon(Heroicon::CheckCircle)
+                ->falseIcon(Heroicon::XCircle)
+                ->trueColor('success')
+                ->falseColor('danger');
+
+            $userColumns[] = TextColumn::make('currency')
+                ->label('Moeda')
+                ->getStateUsing(fn ($record) => $record->pivot?->currency)
+                ->badge();
+        }
+
         return [
-            ColumnGroup::make('Usuário', [
-                TextColumn::make('name')
-                    ->label('Nome')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable()
-                    ->sortable()
-                    ->copyable()
-                    ->icon('heroicon-o-envelope'),
-
-                IconColumn::make('email_verified_at')
-                    ->label('Verificado')
-                    ->getStateUsing(fn ($record) => $record->email_verified_at !== null)
-                    ->boolean()
-                    ->trueIcon(Heroicon::CheckCircle)
-                    ->falseIcon(Heroicon::XCircle)
-                    ->trueColor('success')
-                    ->falseColor('danger')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->sortable(),
-
-                IconColumn::make('pivot.active')
-                    ->label('Ativo')
-                    ->boolean()
-                    ->trueIcon(Heroicon::CheckCircle)
-                    ->falseIcon(Heroicon::XCircle)
-                    ->trueColor('success')
-                    ->falseColor('danger'),
-
-                TextColumn::make('pivot.currency')
-                    ->label('Moeda')
-                    ->badge(),
-            ]),
+            ColumnGroup::make('Usuário', $userColumns),
 
             ColumnGroup::make('Localização', [
                 TextColumn::make('locale')
@@ -70,16 +73,20 @@ class UsersTable
             ]),
 
             ColumnGroup::make('Datas', [
-                TextColumn::make('pivot.joined_at')
-                    ->label('Data de Entrada')
-                    ->date('d/m/Y')
-                    ->sortable(),
+                ...($includeRelationshipFields ? [
+                    TextColumn::make('joined_at')
+                        ->label('Data de Entrada')
+                        ->getStateUsing(fn ($record) => $record->pivot?->joined_at)
+                        ->date('d/m/Y')
+                        ->sortable(),
 
-                TextColumn::make('pivot.left_at')
-                    ->label('Data de Saída')
-                    ->date('d/m/Y')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->placeholder('-'),
+                    TextColumn::make('left_at')
+                        ->label('Data de Saída')
+                        ->getStateUsing(fn ($record) => $record->pivot?->left_at)
+                        ->date('d/m/Y')
+                        ->toggleable(isToggledHiddenByDefault: true)
+                        ->placeholder('-'),
+                ] : []),
 
                 TextColumn::make('created_at')
                     ->label('Criado em')

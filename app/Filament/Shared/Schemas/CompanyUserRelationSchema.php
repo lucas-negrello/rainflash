@@ -2,15 +2,16 @@
 
 namespace App\Filament\Shared\Schemas;
 
+use App\Contracts\Filament\SharedFilamentSchema;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
-class CompanyUserRelationSchema
+class CompanyUserRelationSchema implements SharedFilamentSchema
 {
-    public static function getBase(): array
+    public static function getBase(bool $useRelationshipFields = false): array
     {
         return [
             TextInput::make('primary_title')
