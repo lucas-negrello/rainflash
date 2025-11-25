@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RoleScopeEnum;
 use App\Traits\RoleMethods;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -37,5 +38,15 @@ class Role extends Model implements RoleContract
     public function companyUsers(): BelongsToMany
     {
         return $this->belongsToMany(CompanyUser::class, 'company_user_roles', 'role_id', 'company_user_id');
+    }
+
+    public function scopeGlobal(Builder $query): Builder
+    {
+        return $query->where('scope', RoleScopeEnum::GLOBAL->value);
+    }
+
+    public function scopeCompany(Builder $query): Builder
+    {
+        return $query->where('scope', RoleScopeEnum::COMPANY->value);
     }
 }

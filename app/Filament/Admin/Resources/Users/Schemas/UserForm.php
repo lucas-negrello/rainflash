@@ -26,6 +26,7 @@ class UserForm
                         TextInput::make('email')
                             ->label('Email')
                             ->email()
+                            ->disabled(fn ($record): bool => $record->email === config('admin.user.email'))
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),

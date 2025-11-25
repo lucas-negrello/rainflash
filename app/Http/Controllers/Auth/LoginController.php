@@ -59,8 +59,7 @@ class LoginController extends Controller
 
     protected function redirectAfterLogin($user)
     {
-        $slug = config('admin.company.slug');
-        $isAdminCompanyMember = $user->companies()->where('slug', $slug)->exists();
+        $isAdminCompanyMember = $user->is_admin;
         return redirect()->intended($isAdminCompanyMember ? '/admin' : '/');
     }
 }

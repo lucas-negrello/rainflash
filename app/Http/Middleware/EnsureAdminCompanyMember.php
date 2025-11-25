@@ -15,8 +15,7 @@ class EnsureAdminCompanyMember
             return redirect()->to('/login');
         }
 
-        $slug = (string) config('admin.company.slug');
-        $isAdminCompanyMember = $user->companies()->where('slug', $slug)->exists();
+        $isAdminCompanyMember = $user->is_admin;
         if (!$isAdminCompanyMember) {
             return redirect()->to('/');
         }

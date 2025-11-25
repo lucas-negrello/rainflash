@@ -1,19 +1,13 @@
 <?php
 
 return [
-    // Habilita o seed automático de admin e RBAC na migration de seed inicial
-    'enabled' => env('ADMIN_SEED', true),
-
-    // Se true, garante que a role admin (abaixo) receba todas as permissões disponíveis
-    'grant_all_permissions_to_admin_role' => env('ADMIN_GRANT_ALL_PERMISSIONS', true),
-
-    // Chave da role admin (precisa existir nos seeds desta migration)
-    'admin_role_key' => env('ADMIN_ROLE_KEY', 'ceo'),
+    'features' => [
+        'enable_plans_seeder' => env('ENABLE_PLANS_SEEDER', false),
+    ],
 
     'user' => [
         'name' => env('ADMIN_NAME', 'Admin'),
         'email' => env('ADMIN_EMAIL', 'admin@example.com'),
-        // IMPORTANTE: troque esta senha via env ao subir em produção
         'password' => env('ADMIN_PASSWORD', 'password'),
         'timezone' => env('ADMIN_TIMEZONE', 'UTC-3'),
         'locale' => env('ADMIN_LOCALE', 'pt_BR'),
@@ -24,5 +18,38 @@ return [
         'slug' => env('ADMIN_COMPANY_SLUG', 'rainflash'),
         'currency' => env('ADMIN_COMPANY_CURRENCY', 'BRL'),
     ],
+
+    'plans' => [
+        [
+            'name'          => 'Básico',
+            'key'           => 'basic',
+            'price_monthly' => 39.99,
+            'currency'      => 'BRL',
+        ],
+        [
+            'name'          => 'Profissional',
+            'key'           => 'professional',
+            'price_monthly' => 99.99,
+            'currency'      => 'BRL',
+        ],
+        [
+            'name'          => 'Empresarial',
+            'key'           => 'enterprise',
+            'price_monthly' => 149.99,
+            'currency'      => 'BRL',
+        ],
+        [
+            'name'          => 'Corporativo',
+            'key'           => 'corporate',
+            'price_monthly' => 289.99,
+            'currency'      => 'BRL',
+        ],
+        [
+            'name'          => 'Ilimitado',
+            'key'           => 'unlimited',
+            'price_monthly' => 899.99,
+            'currency'      => 'BRL',
+        ]
+    ]
 ];
 

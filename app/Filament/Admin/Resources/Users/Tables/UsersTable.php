@@ -21,12 +21,8 @@ class UsersTable
             ->filters($filters)
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteAction::make()
+                    ->visible(fn ($record) => $record->email !== config('admin.user.email')),
             ])
             ->columnManagerMaxHeight('300px')
             ->defaultPaginationPageOption(5)

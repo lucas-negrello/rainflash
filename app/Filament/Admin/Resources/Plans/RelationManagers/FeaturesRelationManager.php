@@ -40,7 +40,8 @@ class FeaturesRelationManager extends RelationManager
                 AttachAction::make()
                     ->label('Adicionar Feature')
                     ->preloadRecordSelect()
-                    ->recordSelectOptionsQuery(fn ($query) => $query->orderBy('name'))
+                    ->recordSelectOptionsQuery(fn ($query) => $query
+                        ->orderBy('name'))
                     ->recordSelectSearchColumns(['name', 'key'])
                     ->recordTitleAttribute('name')
                     ->schema(function (AttachAction $action): array {
@@ -50,12 +51,7 @@ class FeaturesRelationManager extends RelationManager
                                 ->searchable()
                                 ->reactive()
                                 ->live()
-                                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name} ({$record->key})")
-                                ->createOptionForm(FeatureSchema::getBase(useRelationshipFields: true))
-                                ->createOptionUsing(function (array $data): int {
-                                    return Feature::create($data)->id;
-                                })
-                                ->createOptionModalHeading('Criar Nova Feature'),
+                                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name} ({$record->key})"),
 
                             Toggle::make('value_boolean')
                                 ->label('Habilitado')

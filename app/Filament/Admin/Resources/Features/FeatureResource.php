@@ -54,7 +54,6 @@ class FeatureResource extends Resource
     {
         return [
             'index' => ListFeatures::route('/'),
-            'create' => CreateFeature::route('/create'),
             'edit' => EditFeature::route('/{record}/edit'),
         ];
     }

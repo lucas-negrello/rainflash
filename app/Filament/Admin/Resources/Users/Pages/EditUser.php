@@ -13,7 +13,7 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()->visible(fn ($record) => $record->email !== config('admin.user.email')),
         ];
     }
 }

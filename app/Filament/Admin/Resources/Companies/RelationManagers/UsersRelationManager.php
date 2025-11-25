@@ -51,10 +51,12 @@ class UsersRelationManager extends RelationManager
             ->recordActions([
                 ActionGroup::make([
                     EditAction::make()
+                        ->visible(fn ($record): bool => $record->email !== config('admin.user.email'))
                         ->label('Editar vínculo')
                         ->schema(CompanyUserRelationSchema::getBase()),
 
                     Action::make('manage_roles')
+                        ->visible(fn ($record): bool => $record->email !== config('admin.user.email'))
                         ->label('Gerenciar Papéis')
                         ->icon(Heroicon::OutlinedKey)
                         ->modalHeading('Gerenciar Papéis do Usuário')
@@ -84,12 +86,9 @@ class UsersRelationManager extends RelationManager
                             }
                         }),
                     DetachAction::make()
+                        ->visible(fn ($record): bool => $record->email !== config('admin.user.email'))
                         ->label('Desvincular usuário'),
                 ]),
-            ])
-            ->toolbarActions([
-                DetachBulkAction::make()
-                    ->label('Desvincular Selecionados'),
             ]);
     }
 }

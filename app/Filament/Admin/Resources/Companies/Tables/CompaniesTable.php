@@ -21,12 +21,7 @@ class CompaniesTable
             SharedCompaniesTable::getFiltersFormSchema($filters))
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteAction::make()->visible(fn ($record) => $record->slug !== config('admin.company.slug')),
             ])
             ->columnManagerMaxHeight('300px')
             ->defaultPaginationPageOption(5)

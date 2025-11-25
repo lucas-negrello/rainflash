@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -40,6 +41,10 @@ class User extends Authenticatable implements FilamentUser
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $appends = [
+        'is_admin',
     ];
 
     /**
@@ -151,5 +156,20 @@ class User extends Authenticatable implements FilamentUser
                 });
             });
 
+    }
+
+    public function getIsAdminAttribute(): bool
+    {
+        $hasAdminRole = $this->companyUsers()
+            ->whereHas('roles', function ($query) {
+                $query->global();
+            })->exists();
+
+        $hasRootPermission = $this->companyUsers()
+            ->whereHas('roles.permissions', function ($query) {
+                $query->root();
+            })->exists();
+
+        return $hasAdminRole || $hasRootPermission;
     }
 }

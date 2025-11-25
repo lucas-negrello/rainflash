@@ -50,9 +50,11 @@ class CompaniesRelationManager extends RelationManager
             ->recordActions([
                 ActionGroup::make([
                     EditAction::make()
+                        ->visible(fn ($record): bool => $record->slug !== config('admin.company.slug'))
                         ->label('Editar Vínculo')
                         ->schema(CompanyUserRelationSchema::getBase()),
                     Action::make('manage_roles')
+                        ->visible(fn ($record): bool => $record->slug !== config('admin.company.slug'))
                         ->label('Gerenciar Papéis')
                         ->icon(Heroicon::OutlinedKey)
                         ->modalHeading('Gerenciar Papéis do Usuário')
@@ -82,11 +84,9 @@ class CompaniesRelationManager extends RelationManager
                             }
                         }),
                     DetachAction::make()
+                        ->visible(fn ($record): bool => $record->slug !== config('admin.company.slug'))
                         ->label('Desvincular Empresa'),
                 ]),
-            ])->toolbarActions([
-                DetachBulkAction::make()
-                    ->label('Desvincular Empresas'),
             ]);
     }
 }

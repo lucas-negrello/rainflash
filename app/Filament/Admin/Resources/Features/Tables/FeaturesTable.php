@@ -3,9 +3,8 @@
 namespace App\Filament\Admin\Resources\Features\Tables;
 
 use App\Filament\Shared\Tables\FeaturesTable as SharedFeaturesTable;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class FeaturesTable
@@ -17,13 +16,8 @@ class FeaturesTable
             ->filters(SharedFeaturesTable::getFilters())
             ->recordActions([
                 EditAction::make()
-                    ->label('Editar'),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->label('Excluir Selecionadas'),
-                ]),
+                    ->icon(Heroicon::OutlinedEye)
+                    ->label('Visualizar'),
             ])
             ->columnManagerMaxHeight('300px')
             ->defaultPaginationPageOption(5)
