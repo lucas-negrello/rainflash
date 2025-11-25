@@ -14,24 +14,46 @@ class TimeEntriesTable implements SharedFilamentTable
 {
     public static function getBase(array $extraFields = [], bool $includeRelationshipFields = false): array
     {
-        $columns = [
-            TextColumn::make('started_at')
-                ->label('Início')
-                ->dateTime('d/m/Y H:i')
-                ->sortable(),
+        $appointmentColumns = [];
 
-            TextColumn::make('ended_at')
-                ->label('Fim')
-                ->dateTime('d/m/Y H:i')
-                ->sortable(),
+        // Adiciona campos específicos se não for RelationManager
+        if (!$includeRelationshipFields) {
+            $appointmentColumns = [
+                TextColumn::make('project.name')
+                    ->label('Projeto')
+                    ->searchable()
+                    ->sortable()
+                    ->icon('heroicon-o-folder'),
 
+                TextColumn::make('task.title')
+                    ->label('Tarefa')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(30)
+                    ->placeholder('—')
+                    ->toggleable(),
+
+                TextColumn::make('companyUserCreator.user.name')
+                    ->label('Criado por')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+            ];
+        }
+
+        $appointmentColumns = array_merge($appointmentColumns, [
             TextColumn::make('duration_minutes')
                 ->label('Duração')
                 ->formatStateUsing(fn ($state) => $state ? number_format($state / 60, 1) : '0')
                 ->suffix(' h')
                 ->sortable()
                 ->badge()
-                ->color('info'),
+                ->color('info')
+                ->summarize([
+                    \Filament\Tables\Columns\Summarizers\Sum::make()
+                        ->label('Total')
+                        ->formatStateUsing(fn ($state) => $state ? number_format($state / 60, 1) . ' h' : '0 h'),
+                ]),
 
             TextColumn::make('origin')
                 ->label('Origem')
@@ -53,43 +75,55 @@ class TimeEntriesTable implements SharedFilamentTable
                 })
                 ->sortable(),
 
-            IconColumn::make('locked')
+            TextColumn::make('locked')
                 ->label('Travado')
-                ->boolean()
-                ->trueIcon('heroicon-o-lock-closed')
-                ->falseIcon('heroicon-o-lock-open')
-                ->trueColor('danger')
-                ->falseColor('success')
+                ->badge()
+                ->formatStateUsing(fn ($state) => $state ? 'Sim' : 'Não')
+                ->color(fn ($state) => $state ? 'danger' : 'success')
                 ->sortable()
                 ->toggleable(),
+        ]);
+
+        $dataColumns = [
+            TextColumn::make('date')
+                ->label('Data')
+                ->date('d/m/Y')
+                ->sortable(),
+
+            TextColumn::make('created_at')
+                ->label('Criado em')
+                ->dateTime('d/m/Y H:i')
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+
+            TextColumn::make('updated_at')
+                ->label('Atualizado em')
+                ->dateTime('d/m/Y H:i')
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
         ];
 
-        // Adiciona campos específicos se não for RelationManager
-        if (!$includeRelationshipFields) {
-            array_splice($columns, 0, 0, [
-                TextColumn::make('project.name')
-                    ->label('Projeto')
-                    ->searchable()
-                    ->sortable()
-                    ->icon('heroicon-o-folder'),
+        $statisticsColumns = [
+            TextColumn::make('approved_at')
+                ->label('Aprovado em')
+                ->dateTime('d/m/Y H:i')
+                ->placeholder('—')
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('task.title')
-                    ->label('Tarefa')
-                    ->searchable()
-                    ->sortable()
-                    ->limit(30)
-                    ->placeholder('—')
-                    ->toggleable(),
+            TextColumn::make('companyUserReviewer.user.name')
+                ->label('Revisado por')
+                ->searchable()
+                ->placeholder('—')
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+        ];
 
-                TextColumn::make('companyUserCreator.user.name')
-                    ->label('Criado por')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
-            ]);
-        }
-
-        return $columns;
+        return [
+            \Filament\Tables\Columns\ColumnGroup::make('Apontamentos', $appointmentColumns),
+            \Filament\Tables\Columns\ColumnGroup::make('Datas', $dataColumns),
+            \Filament\Tables\Columns\ColumnGroup::make('Estatísticas', $statisticsColumns),
+        ];
     }
 
     public static function getFilters(array $extraFilters = []): array

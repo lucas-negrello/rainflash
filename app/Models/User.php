@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -89,6 +90,42 @@ class User extends Authenticatable implements FilamentUser
     public function companyUsers(): HasMany
     {
         return $this->hasMany(CompanyUser::class);
+    }
+
+    public function assignments(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Assignment::class,
+            CompanyUser::class,
+            'user_id',
+            'company_user_id',
+            'id',
+            'id'
+        );
+    }
+
+    public function timeEntriesAsCreator(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            TimeEntry::class,
+            CompanyUser::class,
+            'user_id',
+            'created_by_company_user_id',
+            'id',
+            'id'
+        );
+    }
+
+    public function timeEntriesAsReviewer(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            TimeEntry::class,
+            CompanyUser::class,
+            'user_id',
+            'reviewed_by_company_user_id',
+            'id',
+            'id'
+        );
     }
 
     public function auditLogs(): HasMany

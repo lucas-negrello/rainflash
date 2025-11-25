@@ -104,8 +104,23 @@ class TaskSchema implements SharedFilamentSchema
                 ->searchable()
                 ->required()
                 ->native(false)
-                ->helperText('Apenas usuários atribuídos ao projeto')
-                ->default(fn () => auth()->user()->companyUsers()->first()?->id),
+                ->helperText('Selecione o usuário responsável pela criação')
+                ->default(function (callable $get) {
+                    $projectId = $get('project_id');
+                    if (!$projectId) return null;
+
+                    // Busca o primeiro company_user do usuário atual que está atribuído ao projeto
+                    $currentUser = auth()->user();
+                    if (!$currentUser) return null;
+
+                    $assignment = \App\Models\Assignment::where('project_id', $projectId)
+                        ->whereHas('companyUser', function ($query) use ($currentUser) {
+                            $query->where('user_id', $currentUser->id);
+                        })
+                        ->first();
+
+                    return $assignment?->company_user_id;
+                }),
 
             KeyValue::make('meta')
                 ->label('Metadados (opcional)')

@@ -19,6 +19,7 @@ class TimeEntry extends Model
         'task_id',
         'created_by_company_user_id',
         'reviewed_by_company_user_id',
+        'date',
         'started_at',
         'ended_at',
         'duration_minutes',
@@ -31,6 +32,7 @@ class TimeEntry extends Model
     ];
 
     protected $casts = [
+        'date' => 'date',
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
         'duration_minutes' => 'integer',

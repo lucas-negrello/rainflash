@@ -10,7 +10,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -42,11 +42,6 @@ class TimeEntriesRelationManager extends RelationManager
                         $data['project_id'] = $this->getOwnerRecord()->project_id;
                         $data['origin'] = TimeEntryOriginEnum::MANUAL->value;
 
-                        if ((!isset($data['duration_minutes']) || !$data['duration_minutes']) && isset($data['started_at']) && isset($data['ended_at'])) {
-                            $start = \Carbon\Carbon::parse($data['started_at']);
-                            $end = \Carbon\Carbon::parse($data['ended_at']);
-                            $data['duration_minutes'] = $start->diffInMinutes($end);
-                        }
 
                         return $data;
                     }),
@@ -96,16 +91,7 @@ class TimeEntriesRelationManager extends RelationManager
 
                     EditAction::make()
                         ->label('Editar')
-                        ->schema($this->getTimeEntryFormSchema())
-                        ->mutateDataUsing(function (array $data): array {
-                            if ((!isset($data['duration_minutes']) || !$data['duration_minutes']) && isset($data['started_at']) && isset($data['ended_at'])) {
-                                $start = \Carbon\Carbon::parse($data['started_at']);
-                                $end = \Carbon\Carbon::parse($data['ended_at']);
-                                $data['duration_minutes'] = $start->diffInMinutes($end);
-                            }
-
-                            return $data;
-                        }),
+                        ->schema($this->getTimeEntryFormSchema()),
 
                     DeleteAction::make()
                         ->label('Excluir'),
@@ -117,17 +103,110 @@ class TimeEntriesRelationManager extends RelationManager
                     ->options(TimeEntryStatusEnum::labels())
                     ->native(false)
                     ->placeholder('Todos os status'),
+
+                \Filament\Tables\Filters\SelectFilter::make('month')
+                    ->label('Mês')
+                    ->options([
+                        '01' => 'Janeiro',
+                        '02' => 'Fevereiro',
+                        '03' => 'Março',
+                        '04' => 'Abril',
+                        '05' => 'Maio',
+                        '06' => 'Junho',
+                        '07' => 'Julho',
+                        '08' => 'Agosto',
+                        '09' => 'Setembro',
+                        '10' => 'Outubro',
+                        '11' => 'Novembro',
+                        '12' => 'Dezembro',
+                    ])
+                    ->query(function ($query, $state) {
+                        if ($state['value'] ?? null) {
+                            $query->whereRaw('EXTRACT(MONTH FROM date) = ?', [$state['value']]);
+                        }
+                    })
+                    ->native(false)
+                    ->placeholder('Todos os meses'),
+
+                \Filament\Tables\Filters\SelectFilter::make('year')
+                    ->label('Ano')
+                    ->options(function () {
+                        $currentYear = now()->year;
+                        $years = [];
+                        for ($i = $currentYear - 5; $i <= $currentYear + 1; $i++) {
+                            $years[$i] = $i;
+                        }
+                        return $years;
+                    })
+                    ->query(function ($query, $state) {
+                        if ($state['value'] ?? null) {
+                            $query->whereRaw('EXTRACT(YEAR FROM date) = ?', [$state['value']]);
+                        }
+                    })
+                    ->native(false)
+                    ->placeholder('Todos os anos'),
             ])
-            ->filtersFormColumns(1)
+            ->filtersFormColumns(3)
             ->toolbarActions([
+                \Filament\Actions\BulkAction::make('approve_bulk')
+                    ->label('Aprovar Selecionados')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Aprovar Apontamentos')
+                    ->modalDescription('Tem certeza que deseja aprovar os apontamentos selecionados?')
+                    ->action(function ($records) {
+                        $records->each(function ($record) {
+                            if ($record->status === TimeEntryStatusEnum::PENDING) {
+                                $record->update([
+                                    'status' => TimeEntryStatusEnum::APPROVED->value,
+                                    'approved_at' => now(),
+                                    'reviewed_by_company_user_id' => auth()->user()->companyUsers()->first()?->id,
+                                ]);
+                            }
+                        });
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Apontamentos aprovados')
+                            ->body('Os apontamentos pendentes foram aprovados com sucesso.')
+                            ->success()
+                            ->send();
+                    })
+                    ->deselectRecordsAfterCompletion(),
+
+                \Filament\Actions\BulkAction::make('reprove_bulk')
+                    ->label('Reprovar Selecionados')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Reprovar Apontamentos')
+                    ->modalDescription('Tem certeza que deseja reprovar os apontamentos selecionados?')
+                    ->action(function ($records) {
+                        $records->each(function ($record) {
+                            if ($record->status === TimeEntryStatusEnum::PENDING) {
+                                $record->update([
+                                    'status' => TimeEntryStatusEnum::REPROVED->value,
+                                    'reviewed_by_company_user_id' => auth()->user()->companyUsers()->first()?->id,
+                                ]);
+                            }
+                        });
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Apontamentos reprovados')
+                            ->body('Os apontamentos pendentes foram reprovados com sucesso.')
+                            ->success()
+                            ->send();
+                    })
+                    ->deselectRecordsAfterCompletion(),
+
                 DeleteBulkAction::make()
                     ->label('Excluir Selecionados'),
             ])
-            ->defaultSort('status', 'asc')
+            ->defaultSort('date', 'desc')
             ->modifyQueryUsing(function ($query) {
                 // Ordena para trazer pendentes primeiro, depois data mais recente
                 $query->orderByRaw('CASE WHEN status = ? THEN 0 ELSE 1 END', [TimeEntryStatusEnum::PENDING->value])
-                      ->orderBy('started_at', 'desc');
+                      ->orderBy('date', 'desc');
             });
     }
 
@@ -149,29 +228,22 @@ class TimeEntriesRelationManager extends RelationManager
                 ->native(false)
                 ->helperText('Apenas usuários atribuídos ao projeto'),
 
-            DateTimePicker::make('started_at')
-                ->label('Início')
+            DatePicker::make('date')
+                ->label('Data')
                 ->required()
-                ->displayFormat('d/m/Y H:i')
-                ->seconds(false),
-
-            DateTimePicker::make('ended_at')
-                ->label('Fim')
-                ->required()
-                ->displayFormat('d/m/Y H:i')
-                ->seconds(false)
-                ->after('started_at'),
+                ->displayFormat('d/m/Y')
+                ->default(now())
+                ->maxDate(now()),
 
             TextInput::make('duration_minutes')
-                ->label('Duração (horas)')
+                ->label('Horas Trabalhadas')
                 ->numeric()
                 ->minValue(0)
                 ->step(0.5)
                 ->suffix('h')
-                ->helperText('Preenchido automaticamente se informar início e fim')
+                ->required()
                 ->formatStateUsing(fn ($state) => $state ? ($state / 60) : null)
                 ->dehydrateStateUsing(fn ($state) => $state ? ((float)$state * 60) : null),
-
 
             Select::make('status')
                 ->label('Status')
@@ -200,4 +272,3 @@ class TimeEntriesRelationManager extends RelationManager
         ];
     }
 }
-

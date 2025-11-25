@@ -47,7 +47,9 @@ class UserResource extends Resource
     {
         return [
             RelationManagers\CompaniesRelationManager::class,
+            RelationManagers\ProjectsRelationManager::class,
             RelationManagers\SkillsRelationManager::class,
+            RelationManagers\TimeEntriesRelationManager::class,
         ];
     }
 
