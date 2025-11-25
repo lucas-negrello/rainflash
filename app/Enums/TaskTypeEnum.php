@@ -36,4 +36,15 @@ enum TaskTypeEnum: int implements TableEnumInterface
             self::OTHER => 'yellow',
         };
     }
+
+    public function icon(): string
+    {
+        return match ($this) {
+            self::SUPPORT => 'heroicon-o-lifebuoy',
+            self::FEATURE => 'heroicon-o-sparkles',
+            self::TECH => 'heroicon-o-code-bracket',
+            self::BUG => 'heroicon-o-bug-ant',
+            self::OTHER => 'heroicon-o-ellipsis-horizontal-circle',
+        };
+    }
 }

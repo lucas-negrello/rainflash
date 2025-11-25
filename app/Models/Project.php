@@ -34,6 +34,19 @@ class Project extends Model
         'meta' => 'array',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Project $project) {
+            if (empty($project->code)) {
+                $prefix = strtoupper(substr(preg_replace('/[^a-zA-Z0-9]/', '', $project->name), 0, 4));
+
+                $uuid = substr(str_replace('-', '', \Illuminate\Support\Str::uuid()), 0, 8);
+
+                $project->code = $prefix . '-' . strtoupper($uuid);
+            }
+        });
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);

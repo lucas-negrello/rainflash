@@ -47,6 +47,7 @@ class CompanyResource extends Resource
     {
         return [
             RelationManagers\UsersRelationManager::class,
+            RelationManagers\ProjectsRelationManager::class,
             RelationManagers\FeatureOverridesRelationManager::class,
         ];
     }
